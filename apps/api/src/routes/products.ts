@@ -1,6 +1,5 @@
 import { Router } from 'express'
-import { prisma } from 'database'
-import { Prisma } from '@prisma/client'
+import { prisma, Prisma } from 'database'
 
 const router = Router()
 
@@ -13,10 +12,13 @@ router.get('/', async (req, res) => {
     const { category, limit = '100', offset = '0' } = req.query
 
     const where: ProductWhere = { isActive: true }
-    if (category) where.category = category as string
 
-    const take = Math.min(parseInt(limit as string) || 100, 1000)
-    const skip = parseInt(offset as string) || 0
+    if (category) {
+      where.category = category as string
+    }
+
+    const take = Math.min(Number(limit) || 100, 1000)
+    const skip = Number(offset) || 0
 
     const products = await prisma.product.findMany({
       where,
@@ -32,7 +34,8 @@ router.get('/', async (req, res) => {
   }
 })
 
-// GET /api/products/csv/export
+/* ---------------- CSV EXPORT ---------------- */
+
 router.get('/csv/export', async (_req, res) => {
   try {
     const products = await prisma.product.findMany({
@@ -49,13 +52,10 @@ router.get('/csv/export', async (_req, res) => {
     const escapeCSV = (val: unknown): string => {
       if (val === null || val === undefined) return ''
       const str = String(val)
-      if (/[,"\n]/.test(str)) {
-        return `"${str.replace(/"/g, '""')}"`
-      }
-      return str
+      return /[,"\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str
     }
 
-    const rows = products.map((p: Product) => [
+    const rows = products.map((p) => [
       escapeCSV(p.name),
       escapeCSV(p.description),
       p.price,
@@ -82,7 +82,11 @@ router.get('/csv/export', async (_req, res) => {
     const csv = [headers.join(','), ...rows].join('\n')
 
     res.setHeader('Content-Type', 'text/csv')
-    res.setHeader('Content-Disposition', 'attachment; filename="products_export.csv"')
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename="products_export.csv"'
+    )
+
     res.send(csv)
   } catch (error) {
     console.error('CSV export error:', error)
@@ -90,18 +94,25 @@ router.get('/csv/export', async (_req, res) => {
   }
 })
 
-// POST /api/products/csv/import
+/* ---------------- CSV IMPORT ---------------- */
+
 router.post('/csv/import', async (req, res) => {
   try {
     const { csvData } = req.body
-    if (!csvData) return res.status(400).json({ error: 'csvData is required' })
+
+    if (!csvData) {
+      return res.status(400).json({ error: 'csvData is required' })
+    }
 
     const lines = csvData.split('\n').filter((l: string) => l.trim())
+
     if (lines.length < 2) {
       return res.status(400).json({ error: 'CSV must contain header + data' })
     }
 
-    const headers = lines[0].split(',').map((h: string) => h.trim().toLowerCase())
+    const headers = lines[0]
+      .split(',')
+      .map((h: string) => h.trim().toLowerCase())
 
     const parseCSVLine = (line: string): string[] => {
       const result: string[] = []
@@ -130,14 +141,19 @@ router.post('/csv/import', async (req, res) => {
       return result
     }
 
-    const results = { created: 0, updated: 0, errors: [] as string[] }
+    const results = {
+      created: 0,
+      updated: 0,
+      errors: [] as string[],
+    }
 
     for (let i = 1; i < lines.length; i++) {
       try {
         const values = parseCSVLine(lines[i] || '')
+
         const row: Record<string, string> = {}
 
-        headers.forEach((h, idx) => {
+        headers.forEach((h: string, idx: number) => {
           row[h] = values[idx] || ''
         })
 
@@ -157,7 +173,9 @@ router.post('/csv/import', async (req, res) => {
           videoUrl: row.videourl || null,
           discountActive: parseBool(row.discountactive, false),
           discountPercentage: Number(row.discountpercentage) || 0,
-          sizes: row.sizes ? row.sizes.split(';').map(s => s.trim()).filter(Boolean) : [],
+          sizes: row.sizes
+            ? row.sizes.split(';').map((s: string) => s.trim()).filter(Boolean)
+            : [],
           gender: row.gender || 'both',
           isAccessory: parseBool(row.isaccessory, false),
           isFootwear: parseBool(row.isfootwear, false),
@@ -169,7 +187,9 @@ router.post('/csv/import', async (req, res) => {
         }
 
         if (data.sku) {
-          const existing = await prisma.product.findFirst({ where: { sku: data.sku } })
+          const existing = await prisma.product.findFirst({
+            where: { sku: data.sku },
+          })
 
           if (existing) {
             await prisma.product.update({
@@ -197,14 +217,20 @@ router.post('/csv/import', async (req, res) => {
   }
 })
 
-// GET /api/products/:id
+/* ---------------- SINGLE PRODUCT ---------------- */
+
 router.get('/:id', async (req, res) => {
   try {
     const product = await prisma.product.findFirst({
-      where: { id: req.params.id, isActive: true },
+      where: {
+        id: req.params.id,
+        isActive: true,
+      },
     })
 
-    if (!product) return res.status(404).json({ error: 'Product not found' })
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' })
+    }
 
     res.json(product)
   } catch (error) {
@@ -212,7 +238,8 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-// POST /api/products
+/* ---------------- CREATE ---------------- */
+
 router.post('/', async (req, res) => {
   try {
     const data: Prisma.ProductCreateInput = {
@@ -244,7 +271,8 @@ router.post('/', async (req, res) => {
   }
 })
 
-// PUT /api/products/:id
+/* ---------------- UPDATE ---------------- */
+
 router.put('/:id', async (req, res) => {
   try {
     const product = await prisma.product.update({
@@ -258,10 +286,14 @@ router.put('/:id', async (req, res) => {
   }
 })
 
-// DELETE /api/products/:id
+/* ---------------- DELETE ---------------- */
+
 router.delete('/:id', async (req, res) => {
   try {
-    await prisma.product.delete({ where: { id: req.params.id } })
+    await prisma.product.delete({
+      where: { id: req.params.id },
+    })
+
     res.json({ success: true })
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete product' })
