@@ -21,10 +21,10 @@
     "studio": {
       "cache": false,
       "persistent": true
-    }
-  }
-  ,"pipeline": {
+    ,
     "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"],
       "env": [
         "SUPABASE_URL",
         "SUPABASE_SERVICE_ROLE_KEY",
