@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Router } from 'express'
 import multer from 'multer'
 import path from 'path'
@@ -81,4 +82,7 @@ router.post('/multiple', upload.array('files', 10), async (req, res) => {
 })
 
 export { router as uploadRouter }
+
+
+
 

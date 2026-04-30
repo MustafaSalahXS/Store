@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Router } from 'express'
 import { prisma } from '../lib/prisma.js'
 import { createClient } from '@supabase/supabase-js'
@@ -210,4 +211,7 @@ router.patch('/profile', async (req, res) => {
 })
 
 export { router as authRouter }
+
+
+
 

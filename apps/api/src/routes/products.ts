@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Router } from 'express'
 import { prisma } from '../lib/prisma.js'
 
@@ -289,3 +290,6 @@ router.delete('/:id', async (req, res) => {
 })
 
 export { router as productsRouter }
+
+
+

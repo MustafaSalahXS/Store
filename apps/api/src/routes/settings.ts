@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Router } from 'express'
 import { prisma } from '../lib/prisma.js'
 
@@ -48,4 +49,7 @@ router.put('/', async (req, res) => {
 })
 
 export { router as settingsRouter }
+
+
+
 

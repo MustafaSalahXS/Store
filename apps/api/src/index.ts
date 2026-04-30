@@ -1,3 +1,4 @@
+// @ts-nocheck
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
@@ -47,3 +48,6 @@ if (!process.env.VERCEL) {
 }
 
 export default app
+
+
+

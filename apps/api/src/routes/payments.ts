@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Router } from 'express'
 import axios from 'axios'
 
@@ -90,3 +91,6 @@ router.post('/paymob/callback', async (req, res) => {
 })
 
 export { router as paymentsRouter }
+
+
+

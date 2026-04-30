@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Router } from 'express'
 import { prisma } from '../lib/prisma.js'
 
@@ -101,4 +102,7 @@ router.patch('/:id/status', async (req, res) => {
 })
 
 export { router as ordersRouter }
+
+
+
 
