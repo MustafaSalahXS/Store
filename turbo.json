@@ -3,20 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**"],
-      "env": [
-        "SUPABASE_URL",
-        "SUPABASE_SERVICE_ROLE_KEY",
-        "DATABASE_URL",
-        "DIRECT_URL",
-        "PORT",
-        "FRONTEND_URL",
-        "PAYMOB_API_KEY",
-        "PAYMOB_SECRET_KEY",
-        "PAYMOB_PUBLIC_KEY",
-        "PAYMOB_IFRAME_ID",
-        "PAYMOB_INTEGRATION_ID"
-      ]
+      "outputs": [".next/**", "dist/**"]
     },
     "dev": {
       "cache": false,
