@@ -1,6 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "pnpm build",
+  "buildCommand": "cd ../.. && pnpm prisma generate --schema=packages/database/prisma/schema.prisma && cd apps/api && pnpm build",
   "installCommand": "pnpm install --frozen-lockfile",
   "outputDirectory": "dist"
 }
+
