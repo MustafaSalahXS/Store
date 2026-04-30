@@ -1,9 +1,20 @@
 {
   "version": 2,
-  "buildCommand": "turbo run build --filter=web",
-  "outputDirectory": "apps/web/.next",
-  "framework": "nextjs",
   "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "turbo run build --filter=web",
+  "builds": [
+    {
+      "src": "apps/web/package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    }
+  ],
+  "outputDirectory": "apps/web/.next",
   "env": {
     "NODE_ENV": "production"
   },
