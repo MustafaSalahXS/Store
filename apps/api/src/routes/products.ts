@@ -41,7 +41,7 @@ router.get('/csv/export', async (_req, res) => {
       return str
     }
 
-    const rows = products.map(p => {
+    const rows = products.map((p: any) => {
       return [
         escapeCSV(p.name),
         escapeCSV(p.description),
