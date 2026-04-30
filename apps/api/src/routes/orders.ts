@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { prisma } from 'database'
+import { prisma } from '../lib/prisma.js'
 
 const router = Router()
 
@@ -101,3 +101,4 @@ router.patch('/:id/status', async (req, res) => {
 })
 
 export { router as ordersRouter }
+

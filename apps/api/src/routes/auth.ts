@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { prisma } from 'database'
+import { prisma } from '../lib/prisma.js'
 import { createClient } from '@supabase/supabase-js'
 import bcryptjs from 'bcryptjs'
 import { z } from 'zod'
@@ -210,3 +210,4 @@ router.patch('/profile', async (req, res) => {
 })
 
 export { router as authRouter }
+

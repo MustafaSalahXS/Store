@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { prisma } from 'database'
+import { prisma } from '../lib/prisma.js'
 
 const router = Router()
 
@@ -59,3 +59,4 @@ router.delete('/:id', async (req, res) => {
 })
 
 export { router as bannersRouter }
+

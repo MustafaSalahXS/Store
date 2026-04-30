@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { prisma } from 'database'
+import { prisma } from '../lib/prisma.js'
 
 const router = Router()
 
@@ -63,3 +63,4 @@ router.get('/stats', async (req, res) => {
 })
 
 export { router as adminRouter }
+
