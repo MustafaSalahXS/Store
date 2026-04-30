@@ -1,0 +1,18 @@
+{
+  "name": "ecommerce-monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "dev:web": "turbo run dev --filter=web",
+    "dev:api": "turbo run dev --filter=api",
+    "db:push": "turbo run db:push --filter=database",
+    "db:generate": "turbo run generate --filter=database",
+    "db:seed": "turbo run db:seed --filter=database",
+    "db:studio": "turbo run studio --filter=database"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

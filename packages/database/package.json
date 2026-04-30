@@ -1,0 +1,22 @@
+{
+  "name": "database",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts",
+    "studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "prisma": "^6.8.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

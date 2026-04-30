@@ -1,0 +1,358 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+  .ds-wrap { font-family: 'DM Sans', sans-serif; background: var(--color-background-tertiary); padding: 2rem 1rem; display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; }
+  .phone { width: 360px; background: #0f0f0f; border-radius: 40px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.4); position: relative; }
+  .phone-inner { background: #f5f2ee; min-height: 740px; border-radius: 36px; overflow: hidden; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  /* HOME SCREEN */
+  .home-header { background: #0f0f0f; padding: 20px 20px 28px; position: relative; overflow: hidden; }
+  .home-header::after { content:''; position:absolute; width:200px; height:200px; border-radius:50%; background: rgba(74,199,130,0.08); right:-60px; top:-80px; }
+  .hdr-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .brand { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; color: #fff; letter-spacing: -0.5px; }
+  .brand span { color: #4ac782; }
+  .hdr-icons { display: flex; gap: 12px; align-items: center; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,#4ac782,#2d9e63); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #fff; }
+  .hero-text { color: #fff; }
+  .hero-sub { font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .hero-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 28px; line-height: 1.15; margin-bottom: 16px; }
+  .hero-title em { color: #4ac782; font-style: normal; }
+  .hero-cta { display: inline-flex; align-items: center; gap: 8px; background: #4ac782; color: #0f0f0f; font-size: 13px; font-weight: 600; padding: 10px 20px; border-radius: 100px; cursor: pointer; }
+  .hero-cta svg { width: 14px; height: 14px; }
+  /* SEARCH BAR */
+  .search-wrap { padding: 16px 16px 0; }
+  .search-bar { background: #fff; border-radius: 14px; display: flex; align-items: center; gap: 10px; padding: 12px 16px; border: 1.5px solid #e8e3dc; }
+  .search-bar input { border: none; outline: none; background: transparent; font-size: 14px; color: #333; flex: 1; font-family: 'DM Sans', sans-serif; }
+  .search-bar input::placeholder { color: #bbb; }
+  .filter-btn { width: 34px; height: 34px; background: #0f0f0f; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+  /* BRANDS */
+  .section-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 16px 12px; }
+  .sec-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; color: #0f0f0f; }
+  .see-more { font-size: 12px; color: #4ac782; font-weight: 600; cursor: pointer; }
+  .brands-row { display: flex; gap: 10px; padding: 0 16px 4px; overflow-x: auto; scrollbar-width: none; }
+  .brands-row::-webkit-scrollbar { display: none; }
+  .brand-chip { flex-shrink: 0; padding: 8px 16px; background: #fff; border-radius: 100px; font-size: 12px; font-weight: 600; color: #555; border: 1.5px solid #e8e3dc; cursor: pointer; white-space: nowrap; }
+  .brand-chip.active { background: #0f0f0f; color: #fff; border-color: #0f0f0f; }
+  /* PRODUCT CARDS */
+  .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 8px 16px 16px; }
+  .prod-card { background: #fff; border-radius: 18px; overflow: hidden; cursor: pointer; border: 1.5px solid #f0ebe3; }
+  .prod-img { height: 150px; display: flex; align-items: center; justify-content: center; font-size: 52px; position: relative; }
+  .prod-img.green-bg { background: #e8f7ef; }
+  .prod-img.cream-bg { background: #faf3e8; }
+  .prod-img.dark-bg { background: #1a1a1a; }
+  .prod-img.blue-bg { background: #e8f0fb; }
+  .prod-badge { position: absolute; top: 10px; right: 10px; background: #4ac782; color: #0f0f0f; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 100px; }
+  .prod-badge.dark { background: #0f0f0f; color: #fff; }
+  .prod-info { padding: 12px; }
+  .prod-brand { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+  .prod-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: #0f0f0f; margin-bottom: 8px; line-height: 1.3; }
+  .prod-bottom { display: flex; justify-content: space-between; align-items: center; }
+  .prod-price { font-size: 14px; font-weight: 600; color: #0f0f0f; }
+  .prod-price .old { font-size: 11px; color: #bbb; text-decoration: line-through; font-weight: 400; }
+  .add-btn { width: 28px; height: 28px; background: #0f0f0f; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  /* BOTTOM NAV */
+  .bottom-nav { background: #fff; border-top: 1px solid #f0ebe3; display: flex; justify-content: space-around; padding: 12px 0 16px; }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+  .nav-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; }
+  .nav-label { font-size: 10px; color: #bbb; font-weight: 500; }
+  .nav-item.active .nav-label { color: #4ac782; }
+  .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: #4ac782; }
+  /* DETAIL SCREEN */
+  .detail-header { background: #0f0f0f; padding: 20px 20px 0; }
+  .det-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .back-btn { width: 36px; height: 36px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .fav-btn { width: 36px; height: 36px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .product-stage { background: #1a1a1a; margin: 0 20px; border-radius: 24px; height: 240px; display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 0; }
+  .stage-emoji { font-size: 100px; }
+  .stage-badge { position: absolute; bottom: 16px; left: 16px; background: #4ac782; color: #0f0f0f; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 100px; }
+  .stage-tag { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); font-size: 10px; padding: 4px 10px; border-radius: 100px; }
+  .detail-body { background: #f5f2ee; padding: 20px 20px 100px; min-height: 400px; }
+  .det-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+  .det-brand { font-size: 11px; color: #999; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .det-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 24px; color: #0f0f0f; line-height: 1.2; }
+  .det-price { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 22px; color: #4ac782; }
+  .det-price .old-price { font-size: 14px; color: #bbb; text-decoration: line-through; font-weight: 400; display: block; text-align: right; font-family: 'DM Sans', sans-serif; }
+  .rating-row { display: flex; align-items: center; gap: 8px; margin: 8px 0 16px; }
+  .stars { color: #f5a623; font-size: 13px; letter-spacing: 1px; }
+  .rating-text { font-size: 12px; color: #999; }
+  .desc-title { font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; margin-top: 16px; }
+  .desc-text { font-size: 13px; color: #555; line-height: 1.6; }
+  .size-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0; }
+  .size-chip { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; background: #fff; border: 1.5px solid #e8e3dc; color: #555; cursor: pointer; }
+  .size-chip.active { background: #0f0f0f; color: #fff; border-color: #0f0f0f; }
+  .color-row { display: flex; gap: 10px; margin: 4px 0; }
+  .color-dot { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
+  .color-dot.selected { outline: 2px solid #4ac782; outline-offset: 3px; }
+  .cta-bar { position: absolute; bottom: 0; left: 0; right: 0; background: #fff; padding: 16px 20px; display: flex; gap: 12px; border-top: 1px solid #f0ebe3; }
+  .cart-btn { width: 48px; height: 48px; border-radius: 14px; border: 1.5px solid #0f0f0f; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+  .buy-btn { flex: 1; background: #0f0f0f; color: #fff; border-radius: 14px; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; height: 48px; font-family: 'DM Sans', sans-serif; }
+  .buy-btn .price-tag { color: #4ac782; }
+  .material-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0; }
+  .mat-chip { background: #fff; border-radius: 100px; padding: 5px 12px; font-size: 11px; color: #555; border: 1.5px solid #e8e3dc; }
+  .mat-chip.green { background: #e8f7ef; border-color: #4ac782; color: #2d9e63; font-weight: 600; }
+  /* TABS */
+  .screen-tabs { display: flex; gap: 8px; justify-content: center; padding: 12px 0; background: var(--color-background-tertiary); }
+  .tab-btn { padding: 6px 16px; border-radius: 100px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid #ccc; background: transparent; color: var(--color-text-secondary); font-family: 'DM Sans', sans-serif; }
+  .tab-btn.active { background: #0f0f0f; color: #fff; border-color: #0f0f0f; }
+</style>
+
+<h2 class="sr-only">DigitalStore mobile app UI mockup showing home screen and product detail screen</h2>
+
+<div style="background: var(--color-background-tertiary); padding: 1.5rem 0 0;">
+  <div class="screen-tabs">
+    <button class="tab-btn active" onclick="switchTab('home')">Home Screen</button>
+    <button class="tab-btn" onclick="switchTab('detail')">Product Detail</button>
+  </div>
+</div>
+
+<div class="ds-wrap">
+
+  <!-- HOME SCREEN -->
+  <div id="tab-home" class="phone" style="display:block;">
+    <div class="phone-inner">
+      <div class="home-header">
+        <div class="hdr-top">
+          <div class="brand">Digital<span>Store</span></div>
+          <div class="hdr-icons">
+            <div class="icon-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
+            <div class="avatar">MS</div>
+          </div>
+        </div>
+        <div class="hero-text">
+          <div class="hero-sub">New collection 2025</div>
+          <div class="hero-title">Dress to<br><em>Impress.</em></div>
+          <div class="hero-cta">
+            Explore Now
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-wrap">
+        <div class="search-bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search styles, brands..." readonly />
+          <div class="filter-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-header">
+          <div class="sec-title">Categories</div>
+          <div class="see-more">See all →</div>
+        </div>
+        <div class="brands-row">
+          <div class="brand-chip active">All</div>
+          <div class="brand-chip">Men</div>
+          <div class="brand-chip">Women</div>
+          <div class="brand-chip">Kids</div>
+          <div class="brand-chip">Accessories</div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="sec-title">New Arrivals</div>
+        <div class="see-more">See more →</div>
+      </div>
+
+      <div class="products-grid">
+        <div class="prod-card" onclick="switchTab('detail')">
+          <div class="prod-img green-bg">
+            👗
+            <div class="prod-badge">NEW</div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">DigitalStore</div>
+            <div class="prod-name">Emerald Wrap Dress</div>
+            <div class="prod-bottom">
+              <div class="prod-price">EGP 800</div>
+              <div class="add-btn">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="prod-card" onclick="switchTab('detail')">
+          <div class="prod-img cream-bg">
+            🧥
+            <div class="prod-badge dark">-20%</div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">DigitalStore</div>
+            <div class="prod-name">Linen Overcoat</div>
+            <div class="prod-bottom">
+              <div class="prod-price">
+                EGP 640<br>
+                <span class="old">EGP 800</span>
+              </div>
+              <div class="add-btn">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="prod-card" onclick="switchTab('detail')">
+          <div class="prod-img blue-bg">
+            👔
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">DigitalStore</div>
+            <div class="prod-name">Oxford Slim Shirt</div>
+            <div class="prod-bottom">
+              <div class="prod-price">EGP 450</div>
+              <div class="add-btn">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="prod-card" onclick="switchTab('detail')">
+          <div class="prod-img dark-bg">
+            🧣
+            <div class="prod-badge">HOT</div>
+          </div>
+          <div class="prod-info">
+            <div class="prod-brand">DigitalStore</div>
+            <div class="prod-name">Cashmere Scarf</div>
+            <div class="prod-bottom">
+              <div class="prod-price">EGP 320</div>
+              <div class="add-btn">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item active">
+          <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4ac782" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+          <div class="nav-dot"></div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+          <div class="nav-label">Search</div>
+        </div>
+        <div class="nav-item">
+          <div style="width:48px;height:48px;background:#4ac782;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:-16px;box-shadow:0 4px 16px rgba(74,199,130,0.4)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f0f0f" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </div>
+          <div class="nav-label">Shop</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          <div class="nav-label">Saved</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <div class="nav-label">Profile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL SCREEN -->
+  <div id="tab-detail" class="phone" style="display:none;">
+    <div class="phone-inner" style="position:relative;">
+      <div class="detail-header">
+        <div class="det-nav">
+          <div class="back-btn" onclick="switchTab('home')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </div>
+          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:rgba(255,255,255,0.8);">Product</div>
+          <div class="fav-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+        </div>
+        <div class="product-stage">
+          <div class="stage-emoji">👗</div>
+          <div class="stage-badge">NEW 2025</div>
+          <div class="stage-tag">100% Cotton</div>
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <div class="det-brand">DigitalStore Collection</div>
+        <div class="det-top">
+          <div class="det-name">Emerald<br>Wrap Dress</div>
+          <div class="det-price">
+            <span class="old-price">EGP 1,000</span>
+            EGP 800
+          </div>
+        </div>
+        <div class="rating-row">
+          <span class="stars">★★★★★</span>
+          <span class="rating-text">4.9 · 128 reviews</span>
+        </div>
+
+        <div class="desc-title">Material</div>
+        <div class="material-row">
+          <div class="mat-chip green">Organic Cotton</div>
+          <div class="mat-chip">Breathable</div>
+          <div class="mat-chip">Soft Weave</div>
+        </div>
+
+        <div class="desc-title">Size</div>
+        <div class="size-row">
+          <div class="size-chip">XS</div>
+          <div class="size-chip">S</div>
+          <div class="size-chip active">M</div>
+          <div class="size-chip">L</div>
+          <div class="size-chip">XL</div>
+        </div>
+
+        <div class="desc-title">Color</div>
+        <div class="color-row">
+          <div class="color-dot selected" style="background:#2d9e63;"></div>
+          <div class="color-dot" style="background:#0f0f0f;"></div>
+          <div class="color-dot" style="background:#c8a97e;"></div>
+          <div class="color-dot" style="background:#b03a3a;"></div>
+        </div>
+
+        <div class="desc-title">Description</div>
+        <div class="desc-text">Premium wrap dress crafted with organic cotton. Effortlessly transitions from day to evening with its elegant silhouette and breathable fabric.</div>
+      </div>
+
+      <div class="cta-bar">
+        <div class="cart-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f0f0f" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
+        <div class="buy-btn">
+          Buy Now · <span class="price-tag">EGP 800</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(tab) {
+  document.getElementById('tab-home').style.display = tab === 'home' ? 'block' : 'none';
+  document.getElementById('tab-detail').style.display = tab === 'detail' ? 'block' : 'none';
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', (i===0 && tab==='home') || (i===1 && tab==='detail'));
+  });
+}
+document.querySelectorAll('.size-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    chip.closest('.size-row').querySelectorAll('.size-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+  });
+});
+document.querySelectorAll('.color-dot').forEach(dot => {
+  dot.addEventListener('click', () => {
+    dot.closest('.color-row').querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
+    dot.classList.add('selected');
+  });
+});
+</script>

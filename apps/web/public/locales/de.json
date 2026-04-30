@@ -1,0 +1,49 @@
+{
+  "common": {
+    "home": "Startseite",
+    "shop": "Shop",
+    "dashboard": "Dashboard",
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "logout": "Abmelden",
+    "search": "Suchen...",
+    "cart": "Warenkorb",
+    "checkout": "Kasse",
+    "settings": "Einstellungen",
+    "profile": "Profil",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "view": "Ansehen",
+    "loading": "Laden...",
+    "error": "Ein Fehler ist aufgetreten",
+    "success": "Erfolgreich",
+    "noData": "Keine Daten verfügbar"
+  },
+  "nav": {
+    "products": "Produkte",
+    "categories": "Kategorien",
+    "orders": "Bestellungen",
+    "customers": "Kunden",
+    "analytics": "Analysen",
+    "stores": "Geschäfte",
+    "admin": "Administrator"
+  },
+  "home": {
+    "heroTitle": "Digitale Exzellenz",
+    "heroSubtitle": "Premium-Produkte für moderne Schöpfer",
+    "featured": "Ausgewählte Produkte",
+    "browseAll": "Alle durchsuchen"
+  },
+  "product": {
+    "addToCart": "In den Warenkorb",
+    "buyNow": "Jetzt kaufen",
+    "description": "Beschreibung",
+    "specifications": "Spezifikationen",
+    "reviews": "Bewertungen",
+    "related": "Ähnliche Produkte",
+    "stock": "Vorrätig",
+    "outOfStock": "Nicht vorrätig"
+  }
+}
