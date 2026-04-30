@@ -1,26 +1,25 @@
 import { Router } from 'express'
-import { prisma, Prisma } from 'database'
+import { prisma } from 'database'
 
 const router = Router()
 
-type Product = Prisma.ProductGetPayload<{}>
-type ProductWhere = Prisma.ProductWhereInput
+// نوع آمن بدون Prisma types (عشان Vercel ما يوقعش)
+type Product = any
 
 // GET /api/products
 router.get('/', async (req, res) => {
   try {
     const { category, limit = '100', offset = '0' } = req.query
 
-    const where: ProductWhere = { isActive: true }
-
-    if (category) {
-      where.category = category as string
+    const where = {
+      isActive: true,
+      ...(category ? { category: category as string } : {}),
     }
 
     const take = Math.min(Number(limit) || 100, 1000)
     const skip = Number(offset) || 0
 
-    const products = await prisma.product.findMany({
+    const products: Product[] = await prisma.product.findMany({
       where,
       orderBy: { createdAt: 'desc' },
       take,
@@ -34,11 +33,10 @@ router.get('/', async (req, res) => {
   }
 })
 
-/* ---------------- CSV EXPORT ---------------- */
-
+// GET CSV EXPORT
 router.get('/csv/export', async (_req, res) => {
   try {
-    const products = await prisma.product.findMany({
+    const products: Product[] = await prisma.product.findMany({
       orderBy: { createdAt: 'desc' },
     })
 
@@ -49,7 +47,7 @@ router.get('/csv/export', async (_req, res) => {
       'directCheckout','trackStock'
     ]
 
-    const escapeCSV = (val: unknown): string => {
+    const escapeCSV = (val: unknown) => {
       if (val === null || val === undefined) return ''
       const str = String(val)
       return /[,"\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str
@@ -82,11 +80,7 @@ router.get('/csv/export', async (_req, res) => {
     const csv = [headers.join(','), ...rows].join('\n')
 
     res.setHeader('Content-Type', 'text/csv')
-    res.setHeader(
-      'Content-Disposition',
-      'attachment; filename="products_export.csv"'
-    )
-
+    res.setHeader('Content-Disposition', 'attachment; filename="products_export.csv"')
     res.send(csv)
   } catch (error) {
     console.error('CSV export error:', error)
@@ -94,8 +88,7 @@ router.get('/csv/export', async (_req, res) => {
   }
 })
 
-/* ---------------- CSV IMPORT ---------------- */
-
+// CSV IMPORT
 router.post('/csv/import', async (req, res) => {
   try {
     const { csvData } = req.body
@@ -110,9 +103,7 @@ router.post('/csv/import', async (req, res) => {
       return res.status(400).json({ error: 'CSV must contain header + data' })
     }
 
-    const headers = lines[0]
-      .split(',')
-      .map((h: string) => h.trim().toLowerCase())
+    const headers = lines[0].split(',').map((h: string) => h.trim().toLowerCase())
 
     const parseCSVLine = (line: string): string[] => {
       const result: string[] = []
@@ -160,7 +151,7 @@ router.post('/csv/import', async (req, res) => {
         const parseBool = (val: string, fallback: boolean) =>
           val ? val.toLowerCase() === 'true' : fallback
 
-        const data: Prisma.ProductCreateInput = {
+        const data = {
           name: row.name || 'Untitled Product',
           description: row.description || '',
           price: Number(row.price) || 0,
@@ -217,8 +208,7 @@ router.post('/csv/import', async (req, res) => {
   }
 })
 
-/* ---------------- SINGLE PRODUCT ---------------- */
-
+// GET single product
 router.get('/:id', async (req, res) => {
   try {
     const product = await prisma.product.findFirst({
@@ -238,41 +228,40 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-/* ---------------- CREATE ---------------- */
-
+// CREATE
 router.post('/', async (req, res) => {
   try {
-    const data: Prisma.ProductCreateInput = {
-      ...req.body,
-      description: req.body.description || '',
-      stock: req.body.stock || 0,
-      cost: req.body.cost || 0,
-      isActive: req.body.isActive !== false,
-      image: req.body.image || null,
-      images: req.body.images || [],
-      videoUrl: req.body.videoUrl || null,
-      hasCounter: req.body.hasCounter ?? true,
-      ctaText: req.body.ctaText || 'Add to Cart',
-      directCheckout: req.body.directCheckout ?? false,
-      trackStock: req.body.trackStock ?? true,
-      discountActive: req.body.discountActive ?? false,
-      discountPercentage: req.body.discountPercentage || 0,
-      sizes: req.body.sizes || [],
-      gender: req.body.gender || 'both',
-      isAccessory: req.body.isAccessory ?? false,
-      isFootwear: req.body.isFootwear ?? false,
-      isCurated: req.body.isCurated ?? false,
-    }
+    const product = await prisma.product.create({
+      data: {
+        ...req.body,
+        description: req.body.description || '',
+        stock: req.body.stock || 0,
+        cost: req.body.cost || 0,
+        isActive: req.body.isActive !== false,
+        image: req.body.image || null,
+        images: req.body.images || [],
+        videoUrl: req.body.videoUrl || null,
+        hasCounter: req.body.hasCounter ?? true,
+        ctaText: req.body.ctaText || 'Add to Cart',
+        directCheckout: req.body.directCheckout ?? false,
+        trackStock: req.body.trackStock ?? true,
+        discountActive: req.body.discountActive ?? false,
+        discountPercentage: req.body.discountPercentage || 0,
+        sizes: req.body.sizes || [],
+        gender: req.body.gender || 'both',
+        isAccessory: req.body.isAccessory ?? false,
+        isFootwear: req.body.isFootwear ?? false,
+        isCurated: req.body.isCurated ?? false,
+      },
+    })
 
-    const product = await prisma.product.create({ data })
     res.status(201).json(product)
   } catch (error) {
     res.status(500).json({ error: 'Failed to create product' })
   }
 })
 
-/* ---------------- UPDATE ---------------- */
-
+// UPDATE
 router.put('/:id', async (req, res) => {
   try {
     const product = await prisma.product.update({
@@ -286,8 +275,7 @@ router.put('/:id', async (req, res) => {
   }
 })
 
-/* ---------------- DELETE ---------------- */
-
+// DELETE
 router.delete('/:id', async (req, res) => {
   try {
     await prisma.product.delete({
