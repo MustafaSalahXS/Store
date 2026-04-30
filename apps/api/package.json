@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "prisma generate --schema=../../packages/database/prisma/schema.prisma && tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "postinstall": "prisma generate --schema=../../packages/database/prisma/schema.prisma"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.1",
@@ -28,5 +29,8 @@
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"
   },
-  "type": "module"
+  "type": "module",
+  "prisma": {
+    "schema": "../../packages/database/prisma/schema.prisma"
+  }
 }
