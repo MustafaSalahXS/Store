@@ -6,10 +6,16 @@ import { z } from 'zod'
 
 const router = Router()
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-)
+function getSupabaseAdmin() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error('Missing SUPABASE_URL/NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY')
+  }
+
+  return createClient(supabaseUrl, serviceRoleKey)
+}
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -25,6 +31,7 @@ const loginSchema = z.object({
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
   try {
+    const supabaseAdmin = getSupabaseAdmin()
     const { email, password, name } = registerSchema.parse(req.body)
     const passwordHash = await bcryptjs.hash(password, 10)
 
@@ -150,6 +157,7 @@ router.get('/me', async (req, res) => {
 // PATCH /api/auth/profile
 router.patch('/profile', async (req, res) => {
   try {
+    const supabaseAdmin = getSupabaseAdmin()
     const token = req.headers.authorization?.replace('Bearer ', '')
     if (!token) return res.status(401).json({ error: 'No token' })
 

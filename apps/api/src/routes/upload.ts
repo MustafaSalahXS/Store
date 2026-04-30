@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import multer from 'multer'
 import path from 'path'
-import { supabase } from '../lib/supabase.js'
+import { getSupabaseClient } from '../lib/supabase.js'
 
 const router = Router()
 
@@ -14,6 +14,7 @@ const upload = multer({
 
 // Helper to upload to Supabase
 async function uploadToSupabase(file: Express.Multer.File, bucket: string) {
+  const supabase = getSupabaseClient()
   const fileExt = path.extname(file.originalname)
   const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${fileExt}`
   const filePath = fileName
