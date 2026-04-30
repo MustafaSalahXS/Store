@@ -38,10 +38,12 @@ app.use('/api/payments', paymentsRouter)
 app.use('/api/banners', bannersRouter)
 app.use('/api/coupons', couponsRouter)
 
-// Start
-app.listen(PORT, () => {
-  console.log(`🚀 API server running on http://localhost:${PORT}`)
-  console.log(`📋 Health check: http://localhost:${PORT}/health`)
-})
+// Start local server only outside Vercel serverless runtime
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`API server running on http://localhost:${PORT}`)
+    console.log(`Health check: http://localhost:${PORT}/health`)
+  })
+}
 
 export default app
