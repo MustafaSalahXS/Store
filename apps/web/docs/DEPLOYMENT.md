@@ -189,6 +189,8 @@ pnpm run db:seed
 
 ### Vercel Production Project
 
+This is a monorepo with pnpm workspaces. Vercel configuration is handled by `vercel.json` at the root.
+
 1. **Create Vercel Project:**
    - Go to https://vercel.com
    - Click "Add New..."
@@ -199,25 +201,45 @@ pnpm run db:seed
 
 2. **Configure Project:**
    - Project Name: your-store-name
-   - Framework: Next.js
-   - Root Directory: ./
-   - Build Command: `pnpm build`
-   - Install Command: `pnpm install`
+   - Framework: Next.js (auto-detected)
+   - Root Directory: `./` (Vercel reads from vercel.json)
+   - Build Command: Leave empty (uses vercel.json)
+   - Install Command: Leave empty (uses vercel.json)
+
+   The `vercel.json` file at the repository root automatically configures:
+   - Build command: `turbo run build --filter=web`
+   - Output directory: `apps/web/.next`
+   - Framework detection: Next.js
 
 3. **Add Environment Variables:**
    - Go to Settings → Environment Variables
-   - Add all production secrets (see below)
+   - Add `NEXT_PUBLIC_API_URL`: Set to your deployed API URL
+     - For separate Vercel API project: `https://your-api-project.vercel.app`
+     - For custom domain: `https://api.yourdomain.com`
+   - Add all other production secrets
    - Select which environments (Production, Preview, Development)
 
-4. **Domains:**
-   - Go to Domains
-   - Add your domain
-   - Follow DNS configuration
+4. **Deploy API Separately:**
+   - The Express API (`apps/api`) must be deployed to a separate service:
+     - Create another Vercel project pointing to the same repo
+     - Set Root Directory: `apps/api`
+     - Or deploy to Railway, Render, or another hosting
+   - Once deployed, set `NEXT_PUBLIC_API_URL` to the API's URL
 
-5. **Deploy:**
+5. **Domains:**
+   - Go to Domains
+   - Add your domain for the web app
+   - Add a subdomain (e.g., `api.yourdomain.com`) for the API if using custom domain
+
+6. **Deploy:**
    - Click "Deploy"
    - Wait for build (3-5 mins)
    - Check deployment logs for errors
+
+7. **Test API Routes:**
+   - Once deployed, verify API calls work
+   - Check browser DevTools Network tab for `/api/*` requests
+   - Verify they proxy to your backend correctly
 
 ---
 
