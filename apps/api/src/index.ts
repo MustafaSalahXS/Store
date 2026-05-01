@@ -16,8 +16,29 @@ import couponsRouter from './routes/coupons.js'
 const app = express()
 const PORT = process.env.PORT || 4000
 
+const configuredOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+
+const isAllowedOrigin = (origin?: string) => {
+  if (!origin) return true
+  if (configuredOrigins.includes(origin)) return true
+
+  // Allow Vercel hosted frontends and previews.
+  return /^https:\/\/([a-zA-Z0-9-]+\.)*vercel\.app$/.test(origin)
+}
+
 // Middleware
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000', credentials: true }))
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (isAllowedOrigin(origin)) return callback(null, true)
+      return callback(new Error(`CORS blocked for origin: ${origin}`))
+    },
+    credentials: true,
+  }),
+)
 app.use(express.json())
 
 // Serve uploads
