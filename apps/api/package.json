@@ -4,9 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "prisma generate --schema=../../packages/database/prisma/schema.prisma && tsc",
+    "prisma:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "build": "pnpm run prisma:generate && tsc",
     "start": "node dist/index.js",
-    "postinstall": "prisma generate --schema=../../packages/database/prisma/schema.prisma"
+    "postinstall": "pnpm run prisma:generate"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.1",
@@ -31,6 +35,6 @@
   },
   "type": "module",
   "prisma": {
-    "schema": "../../packages/database/prisma/schema.prisma"
+    "schema": "prisma/schema.prisma"
   }
 }

@@ -4,12 +4,13 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
+    "postinstall": "pnpm --filter api run prisma:generate",
     "dev:web": "turbo run dev --filter=web",
     "dev:api": "turbo run dev --filter=api",
-    "db:push": "turbo run db:push --filter=database",
-    "db:generate": "turbo run generate --filter=database",
-    "db:seed": "turbo run db:seed --filter=database",
-    "db:studio": "turbo run studio --filter=database"
+    "db:push": "pnpm --filter api run db:push",
+    "db:generate": "pnpm --filter api run prisma:generate",
+    "db:seed": "pnpm --filter api run db:seed",
+    "db:studio": "pnpm --filter api run db:studio"
   },
   "devDependencies": {
     "turbo": "^2.5.0"
