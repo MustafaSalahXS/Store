@@ -137,7 +137,7 @@ export default function ShopPage() {
       {/* Footer */}
       <footer className="border-t border-border py-12 mt-20">
         <div className="section-container text-center">
-          <p className="text-sm text-muted-foreground">&copy; 2024 {store.name}. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">&copy; 2026 {store.name}. All rights reserved.</p>
         </div>
       </footer>
     </div>

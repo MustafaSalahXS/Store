@@ -129,7 +129,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }} 
             className="mb-8"
           >
-            <span className="font-jost text-xs md:text-sm font-medium text-gold-600 uppercase tracking-[0.5em]">The 2025 Collection</span>
+            <span className="font-jost text-xs md:text-sm font-medium text-gold-600 uppercase tracking-[0.5em]">The 2026 Collection</span>
           </motion.div>
 
           <motion.h1 
