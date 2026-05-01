@@ -487,7 +487,7 @@ export default function AdminPage() {
           <div>
             <h1 className="text-3xl md:text-4xl font-black tracking-tight">{t('admin.dashboard')}</h1>
             <p className="text-sm text-muted-foreground mt-1 font-medium">
-              {t('common.store')}: <span className="text-primary">{currentStore?.name || 'My Store'}</span>
+              Store: <span className="text-primary">{currentStore?.name || 'My Store'}</span>
             </p>
           </div>
         </div>
