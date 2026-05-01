@@ -24,8 +24,28 @@ app.use(express.json())
 app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')))
 
 // Health check
+app.get('/', (_req, res) => {
+  res.json({
+    service: 'store-api',
+    status: 'ok',
+    health: '/health',
+    apiBase: '/api',
+    timestamp: new Date().toISOString(),
+  })
+})
+
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
+})
+
+// Compatibility alias for common typo from external checks.
+app.get('/heatlh', (_req, res) => {
+  res.redirect(307, '/health')
+})
+
+// Avoid noisy 404s from browser automatic favicon request.
+app.get('/favicon.ico', (_req, res) => {
+  res.status(204).end()
 })
 
 // Routes
