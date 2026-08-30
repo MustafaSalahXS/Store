@@ -47,20 +47,23 @@ export default function ProductFormModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-stone-900/60 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 bg-stone-900/60 backdrop-blur-md"
         >
           <motion.div
-            initial={{ scale: 0.9, y: 20 }}
+            initial={{ scale: 0.95, y: 30 }}
             animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0.9, y: 20 }}
-            className="bg-white w-full max-w-6xl max-h-[92vh] sm:max-h-[90vh] overflow-y-auto rounded-2xl sm:rounded-[2.5rem] md:rounded-[3rem] p-4 sm:p-8 md:p-12 lg:p-16 border border-stone-100 shadow-2xl relative"
+            exit={{ scale: 0.95, y: 30 }}
+            className="bg-white w-full max-w-5xl max-h-[94vh] sm:max-h-[90vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl p-4 sm:p-8 md:p-10 border border-stone-100 shadow-2xl relative"
           >
+            {/* Mobile Drag Handle */}
+            <div className="w-12 h-1.5 bg-stone-300 rounded-full mx-auto mb-3 sm:hidden" />
+
             <button
               type="button"
               onClick={onClose}
-              className="absolute top-3 right-3 sm:top-6 sm:right-6 md:top-8 md:right-8 p-2 sm:p-3 hover:bg-stone-50 rounded-full z-20 transition-colors"
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 rtl:right-auto rtl:left-4 rtl:sm:left-6 p-2 hover:bg-stone-50 rounded-full z-20 transition-colors text-stone-400 hover:text-stone-700"
             >
-              <X className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-stone-400" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
 
             <div className="mb-6 sm:mb-8 md:mb-12 pr-8 sm:pr-0">

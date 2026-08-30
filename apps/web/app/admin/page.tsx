@@ -414,12 +414,24 @@ export default function AdminPage() {
   }
 
   const handleDeleteProduct = async (id: string) => {
-    if (!confirm('Delete this product?')) return
+    if (!confirm(isRTL ? 'هل أنت متأكد من حذف هذا المنتج؟' : 'Delete this product?')) return
     try {
       await api.products.delete(id)
       setProducts(products.filter(p => p.id !== id))
     } catch (error) {
-      alert('Failed to delete product.')
+      alert(isRTL ? 'فشل حذف المنتج.' : 'Failed to delete product.')
+    }
+  }
+
+  const handleToggleProductStatus = async (product: any) => {
+    try {
+      const updated = await api.products.update(product.id, { isActive: !product.isActive })
+      setProducts(products.map(p => p.id === product.id ? updated : p))
+      setSaveSuccess(isRTL ? 'تم تغيير حالة ظهور المنتج بنجاح!' : 'Product status updated!')
+      setTimeout(() => setSaveSuccess(''), 3000)
+    } catch (error) {
+      console.error('Error toggling product status:', error)
+      alert(isRTL ? 'فشل تغيير حالة المنتج.' : 'Failed to update product status.')
     }
   }
 
@@ -912,6 +924,7 @@ export default function AdminPage() {
             onOpenCreate={openCreateProductModal}
             onOpenEdit={openEditProductModal}
             onDelete={handleDeleteProduct}
+            onToggleActive={handleToggleProductStatus}
             onExportCsv={handleExportCsv}
             csvFileRef={csvFileRef}
             onCsvUpload={handleCsvFileUpload}

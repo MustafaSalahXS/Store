@@ -10,6 +10,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  experimental: {
+    cpus: 2,
+  },
   async rewrites() {
     return {
       beforeFiles: [

@@ -281,39 +281,32 @@ export default function ProductsPage() {
         <div className="mb-6 sm:mb-8 border-b border-stone-200 pb-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.25em] text-gold-600">
-                Atelier Haute Couture & Tailoring
+              <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.25em] text-primary">
+                {isRTL ? 'المشغل والأزياء الحصرية' : 'Atelier Haute Couture & Tailoring'}
               </span>
-              <h1 className="font-bodoni text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tight text-stone-900 mt-1">
-                The Complete Catalog
+              <h1 className="font-bodoni text-2xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tight text-stone-900 mt-1">
+                {isRTL ? 'التشكيلة والكتالوج الكامل' : 'The Complete Catalog'}
               </h1>
-              <p className="font-jost text-xs sm:text-sm text-stone-500 max-w-xl mt-1">
-                Explore hand-tailored garments and seasonal releases. Filter by bespoke colors, sizes, materials, and curated collections.
+              <p className="text-xs sm:text-sm text-stone-500 max-w-xl mt-1" dir={isRTL ? 'rtl' : 'ltr'}>
+                {isRTL 
+                  ? 'استكشف كافة قطع الأزياء المصممة بعناية وتشكيلات الموسم. خصص اختياراتك حسب الألوان، المقاسات، والخامات.' 
+                  : 'Explore hand-tailored garments and seasonal releases. Filter by bespoke colors, sizes, materials, and curated collections.'}
               </p>
             </div>
 
-            {/* Quick Actions & Mobile Filter Button */}
-            <div className="flex items-center gap-2.5">
-              <button
-                onClick={() => setIsMobileFilterOpen(true)}
-                className="lg:hidden px-4 py-2.5 bg-stone-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-md active:scale-95"
-              >
-                <SlidersHorizontal className="w-4 h-4" />
-                <span>Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}</span>
-              </button>
-
-              {/* Sort By Dropdown */}
+            {/* Desktop Sort By Dropdown (Desktop Only) */}
+            <div className="hidden lg:flex items-center gap-2.5">
               <div className="relative flex items-center bg-white border border-stone-200 rounded-xl px-3 py-2 shadow-sm text-xs font-semibold">
-                <ArrowUpDown className="w-3.5 h-3.5 text-stone-400 mr-2 shrink-0" />
+                <ArrowUpDown className="w-3.5 h-3.5 text-stone-400 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
                 <select
                   value={sortBy}
                   onChange={e => setSortBy(e.target.value as any)}
-                  className="bg-transparent outline-none pr-4 cursor-pointer text-stone-800"
+                  className="bg-transparent outline-none pr-4 rtl:pr-0 rtl:pl-4 cursor-pointer text-stone-800"
                 >
-                  <option value="newest">Newest Creations</option>
-                  <option value="price_asc">Price: Low to High</option>
-                  <option value="price_desc">Price: High to Low</option>
-                  <option value="popular">Most In-Demand</option>
+                  <option value="newest">{isRTL ? 'الأحدث أولاً' : 'Newest Creations'}</option>
+                  <option value="price_asc">{isRTL ? 'السعر: من الأقل للأعلى' : 'Price: Low to High'}</option>
+                  <option value="price_desc">{isRTL ? 'السعر: من الأعلى للأقل' : 'Price: High to Low'}</option>
+                  <option value="popular">{isRTL ? 'الأكثر طلباً' : 'Most In-Demand'}</option>
                 </select>
               </div>
             </div>
@@ -636,7 +629,67 @@ export default function ProductsPage() {
               </div>
             ) : (
               <div>
-                <div className="flex items-center justify-between mb-4 text-xs text-stone-500 font-bold">
+                {/* Mobile Sticky Quick Filter Bar */}
+                <div className="lg:hidden sticky top-16 md:top-24 z-30 bg-stone-50/95 backdrop-blur-md py-2.5 -mx-4 px-4 border-b border-stone-200/80 mb-4 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    {/* All Filters Trigger Button */}
+                    <button
+                      onClick={() => setIsMobileFilterOpen(true)}
+                      className="flex-1 py-2.5 px-3.5 bg-stone-900 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md active:scale-95 shrink-0"
+                    >
+                      <SlidersHorizontal className="w-4 h-4 text-primary" />
+                      <span>{isRTL ? 'جميع الفلاتر' : 'All Filters'}</span>
+                      {activeFiltersCount > 0 && (
+                        <span className="bg-primary text-white text-[10px] px-1.5 py-0.2 rounded-full font-mono">
+                          {activeFiltersCount}
+                        </span>
+                      )}
+                    </button>
+
+                    {/* Quick Sort Dropdown on Mobile */}
+                    <div className="relative flex items-center bg-white border border-stone-200 rounded-xl px-2.5 py-2 shadow-xs text-xs font-bold shrink-0">
+                      <ArrowUpDown className="w-3.5 h-3.5 text-stone-400 mr-1.5 rtl:mr-0 rtl:ml-1.5" />
+                      <select
+                        value={sortBy}
+                        onChange={e => setSortBy(e.target.value as any)}
+                        className="bg-transparent outline-none cursor-pointer text-stone-800 text-[11px] font-bold"
+                      >
+                        <option value="newest">{isRTL ? 'الأحدث' : 'Newest'}</option>
+                        <option value="price_asc">{isRTL ? 'الأقل سعراً' : 'Price: Low'}</option>
+                        <option value="price_desc">{isRTL ? 'الأعلى سعراً' : 'Price: High'}</option>
+                        <option value="popular">{isRTL ? 'الأكثر طلباً' : 'Popular'}</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Horizontal Scrollable Categories Chips */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                    <button
+                      onClick={() => setSelectedCategory('all')}
+                      className={`px-3 py-1.5 rounded-full text-[11px] font-bold shrink-0 transition-all ${
+                        selectedCategory === 'all' ? 'bg-primary text-white shadow-xs' : 'bg-white border border-stone-200 text-stone-700'
+                      }`}
+                    >
+                      {isRTL ? 'الكل' : 'All'}
+                    </button>
+                    {adminCategories.map((cat: string) => {
+                      const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase()
+                      return (
+                        <button
+                          key={cat}
+                          onClick={() => setSelectedCategory(isSelected ? 'all' : cat)}
+                          className={`px-3 py-1.5 rounded-full text-[11px] font-bold shrink-0 transition-all ${
+                            isSelected ? 'bg-primary text-white shadow-xs' : 'bg-white border border-stone-200 text-stone-700'
+                          }`}
+                        >
+                          {cat}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                <div className="hidden lg:flex items-center justify-between mb-4 text-xs text-stone-500 font-bold">
                   <span>Showing {filteredProducts.length} Atelier Pieces</span>
                   <span className="text-[10px] text-stone-400 uppercase tracking-widest">Handmade to order</span>
                 </div>
@@ -651,7 +704,7 @@ export default function ProductsPage() {
         </div>
       </main>
 
-      {/* Mobile Filters Drawer Modal */}
+      {/* Mobile Filters Drawer Modal (Containing ALL Filters) */}
       <AnimatePresence>
         {isMobileFilterOpen && (
           <motion.div
@@ -665,12 +718,15 @@ export default function ProductsPage() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25 }}
-              className="bg-white w-full max-h-[85vh] rounded-t-3xl sm:rounded-3xl p-6 overflow-y-auto space-y-6"
+              className="bg-white w-full max-h-[88vh] rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 overflow-y-auto space-y-5"
             >
-              <div className="flex items-center justify-between pb-4 border-b border-stone-100">
+              {/* Mobile Swipe Drag Handle */}
+              <div className="w-12 h-1.5 bg-stone-300 rounded-full mx-auto sm:hidden" />
+
+              <div className="flex items-center justify-between pb-3 border-b border-stone-100">
                 <h3 className="font-bodoni text-xl font-bold uppercase tracking-tight flex items-center gap-2">
-                  <SlidersHorizontal className="w-5 h-5 text-gold-500" />
-                  <span>Filter Collection</span>
+                  <SlidersHorizontal className="w-5 h-5 text-primary" />
+                  <span>{isRTL ? 'جميع فلاتر التشكيلة' : 'All Collection Filters'}</span>
                 </h3>
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
@@ -680,85 +736,240 @@ export default function ProductsPage() {
                 </button>
               </div>
 
-              {/* Categories */}
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Categories</label>
-                <div className="flex gap-1.5 flex-wrap">
+              {/* 1. Live Search within catalog */}
+              <div className="relative">
+                <Search className="w-4 h-4 text-stone-400 absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2" />
+                <input
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder={isRTL ? 'ابحث بالاسم، القماش، أو الكود...' : 'Search collection...'}
+                  className="w-full pl-9 pr-8 rtl:pl-8 rtl:pr-9 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-medium text-stone-900 outline-none focus:bg-white focus:border-primary transition-all"
+                />
+                {searchQuery && (
                   <button
-                    onClick={() => setSelectedCategory('all')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold ${
-                      selectedCategory === 'all' ? 'bg-stone-900 text-white' : 'bg-stone-100 text-stone-700'
-                    }`}
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 rtl:right-auto rtl:left-2.5 top-1/2 -translate-y-1/2 p-1 text-stone-400"
                   >
-                    All
+                    <X className="w-3.5 h-3.5" />
                   </button>
-                  {adminCategories.map((c: string) => (
+                )}
+              </div>
+
+              {/* 2. Audience / Gender */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-stone-500 block">
+                  {isRTL ? 'الفئة المستهدفة' : 'Audience / Gender'}
+                </label>
+                <div className="grid grid-cols-3 gap-1.5 p-1 bg-stone-100 rounded-xl">
+                  {[
+                    { val: 'all', label: isRTL ? 'الكل' : 'All' },
+                    { val: 'women', label: isRTL ? 'نساء' : 'Women' },
+                    { val: 'men', label: isRTL ? 'رجال' : 'Men' }
+                  ].map(g => (
                     <button
-                      key={c}
-                      onClick={() => setSelectedCategory(c)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold ${
-                        selectedCategory === c ? 'bg-stone-900 text-white' : 'bg-stone-100 text-stone-700'
+                      key={g.val}
+                      onClick={() => setSelectedGender(g.val)}
+                      className={`py-2 rounded-lg text-xs font-bold transition-all ${
+                        selectedGender === g.val ? 'bg-primary text-white shadow-xs' : 'text-stone-700 hover:text-stone-900'
                       }`}
                     >
-                      {c}
+                      {g.label}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Colors */}
-              {availableColors.length > 0 && (
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Colors</label>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {availableColors.map(c => (
-                      <button
-                        key={c.name}
-                        onClick={() => setSelectedColor(selectedColor === c.name ? null : c.name)}
-                        className={`w-8 h-8 rounded-full border-2 ${
-                          selectedColor === c.name ? 'ring-2 ring-gold-500 ring-offset-2 scale-110 border-white' : 'border-black/20'
-                        }`}
-                        style={{ backgroundColor: c.hex }}
-                        title={c.name}
-                      />
-                    ))}
-                  </div>
+              {/* 3. Categories with live item counts */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-stone-500 block">
+                    {isRTL ? 'الأقسام والتصنيفات' : 'Categories'}
+                  </label>
+                  <span className="text-[10px] font-mono text-stone-400 font-bold">{adminCategories.length + 1}</span>
                 </div>
-              )}
-
-              {/* Sizes */}
-              {availableSizes.length > 0 && (
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Sizes</label>
-                  <div className="flex gap-2 flex-wrap">
-                    {availableSizes.map(s => (
+                <div className="flex gap-1.5 flex-wrap max-h-36 overflow-y-auto pr-1">
+                  <button
+                    onClick={() => setSelectedCategory('all')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      selectedCategory === 'all' ? 'bg-primary text-white shadow-xs' : 'bg-stone-100 text-stone-700'
+                    }`}
+                  >
+                    {isRTL ? 'كل الأقسام' : 'All Categories'} ({products.length})
+                  </button>
+                  {adminCategories.map((c: string) => {
+                    const count = products.filter(p => (p.category || '').toLowerCase() === c.toLowerCase()).length
+                    const isSelected = selectedCategory.toLowerCase() === c.toLowerCase()
+                    return (
                       <button
-                        key={s}
-                        onClick={() => setSelectedSize(selectedSize === s ? null : s)}
-                        className={`px-4 py-2 rounded-xl text-xs font-black uppercase ${
-                          selectedSize === s ? 'bg-stone-900 text-white' : 'bg-stone-100 text-stone-700'
+                        key={c}
+                        onClick={() => setSelectedCategory(isSelected ? 'all' : c)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                          isSelected ? 'bg-primary text-white shadow-xs' : 'bg-stone-100 text-stone-700'
                         }`}
                       >
-                        {s}
+                        {c} ({count})
                       </button>
-                    ))}
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* 4. Curated Collections (Admin Managed) */}
+              {adminCollections.length > 0 && (
+                <div className="space-y-2 pt-3 border-t border-stone-100">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-stone-500 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-primary" />
+                    <span>{isRTL ? 'التشكيلات الحصرية' : 'Curated Collections'}</span>
+                  </label>
+                  <div className="flex gap-1.5 flex-wrap">
+                    {adminCollections.map((col: string) => {
+                      const isSelected = selectedCollections.includes(col)
+                      return (
+                        <button
+                          key={col}
+                          onClick={() => toggleCollection(col)}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                            isSelected ? 'bg-purple-700 text-white shadow-xs' : 'bg-stone-100 text-stone-700'
+                          }`}
+                        >
+                          <span>{col}</span>
+                          {isSelected && <Check className="w-3 h-3 text-white" />}
+                        </button>
+                      )
+                    })}
                   </div>
                 </div>
               )}
 
-              {/* Drawer Apply Buttons */}
-              <div className="pt-4 border-t border-stone-100 flex gap-3">
+              {/* 5. Colors & Swatches */}
+              {availableColors.length > 0 && (
+                <div className="space-y-2 pt-3 border-t border-stone-100">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-stone-500 flex items-center gap-1.5">
+                      <Palette className="w-3.5 h-3.5 text-primary" />
+                      <span>{isRTL ? 'الألوان والدرجات' : 'Colors & Swatches'}</span>
+                    </label>
+                    {selectedColor && (
+                      <button onClick={() => setSelectedColor(null)} className="text-[10px] font-bold text-rose-600 hover:underline">
+                        {isRTL ? 'إلغاء' : 'Clear'}
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {availableColors.map(c => {
+                      const isSelected = selectedColor === c.name
+                      return (
+                        <button
+                          key={c.name}
+                          onClick={() => setSelectedColor(isSelected ? null : c.name)}
+                          className={`w-8 h-8 rounded-full border transition-all relative flex items-center justify-center ${
+                            isSelected ? 'ring-2 ring-primary ring-offset-2 scale-110 border-white shadow-sm' : 'border-black/20'
+                          }`}
+                          style={{ backgroundColor: c.hex }}
+                          title={c.name}
+                        >
+                          {isSelected && <Check className="w-4 h-4 text-white stroke-[3] drop-shadow" />}
+                        </button>
+                      )
+                    })}
+                  </div>
+                  {selectedColor && (
+                    <p className="text-[11px] font-bold text-primary mt-1">
+                      {isRTL ? `الدرجة المختارة: ${selectedColor}` : `Selected Shade: ${selectedColor}`}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* 6. Garment Sizes */}
+              {availableSizes.length > 0 && (
+                <div className="space-y-2 pt-3 border-t border-stone-100">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-stone-500 block">
+                      {isRTL ? 'المقاسات المتاحة' : 'Garment Sizes'}
+                    </label>
+                    {selectedSize && (
+                      <button onClick={() => setSelectedSize(null)} className="text-[10px] font-bold text-rose-600 hover:underline">
+                        {isRTL ? 'إلغاء' : 'Clear'}
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex gap-1.5 flex-wrap">
+                    {availableSizes.map(s => {
+                      const isSelected = selectedSize === s
+                      return (
+                        <button
+                          key={s}
+                          onClick={() => setSelectedSize(isSelected ? null : s)}
+                          className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-black uppercase transition-all ${
+                            isSelected ? 'bg-primary text-white shadow-xs' : 'bg-stone-100 text-stone-700'
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* 7. Luxury Materials & Fabrics */}
+              {adminMaterials.length > 0 && (
+                <div className="space-y-2 pt-3 border-t border-stone-100">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-stone-500 flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5 text-primary" />
+                    <span>{isRTL ? 'الخامات والأقمشة الفاخرة' : 'Luxury Materials & Fabrics'}</span>
+                  </label>
+                  <div className="flex gap-1.5 flex-wrap">
+                    {adminMaterials.map((mat: string) => {
+                      const isSelected = selectedMaterials.includes(mat)
+                      return (
+                        <button
+                          key={mat}
+                          onClick={() => toggleMaterial(mat)}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                            isSelected ? 'bg-amber-600 text-white shadow-xs' : 'bg-stone-100 text-stone-700'
+                          }`}
+                        >
+                          <span>{mat}</span>
+                          {isSelected && <Check className="w-3 h-3 text-white" />}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* 8. Price Range Slider */}
+              <div className="space-y-2 pt-3 border-t border-stone-100">
+                <div className="flex items-center justify-between text-xs font-bold">
+                  <span className="text-[10px] uppercase tracking-widest text-stone-500">{isRTL ? 'أقصى سعر' : 'Max Price'}</span>
+                  <span className="font-mono text-stone-900 font-black">{formatPrice(priceRange[1], currency)}</span>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={maxProductPrice}
+                  step={50}
+                  value={priceRange[1]}
+                  onChange={e => setPriceRange([0, Number(e.target.value)])}
+                  className="w-full accent-primary cursor-pointer h-2"
+                />
+              </div>
+
+              {/* Drawer Apply & Reset Sticky Footer */}
+              <div className="pt-4 border-t border-stone-100 flex gap-3 sticky bottom-0 bg-white pb-2">
                 <button
                   onClick={handleResetFilters}
-                  className="flex-1 py-3 bg-stone-100 text-stone-700 rounded-xl text-xs font-bold uppercase tracking-wider"
+                  className="flex-1 py-3 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-xs font-bold uppercase tracking-wider active:scale-95 transition-all"
                 >
-                  Reset
+                  {isRTL ? 'إعادة تعيين' : 'Reset'}
                 </button>
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
-                  className="flex-1 py-3 bg-stone-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-lg"
+                  className="flex-1 py-3 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-lg active:scale-95 transition-all hover:brightness-110"
                 >
-                  Show {filteredProducts.length} Results
+                  {isRTL ? `عرض (${filteredProducts.length}) قطعة` : `Show (${filteredProducts.length}) Results`}
                 </button>
               </div>
             </motion.div>
