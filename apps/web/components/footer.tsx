@@ -33,13 +33,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-24">
           <div className="space-y-8">
             <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
-              {currentStore?.logoUrl ? (
-                <img src={currentStore.logoUrl} alt={currentStore.name} className="h-10 md:h-12 w-auto object-contain" />
-              ) : (
-                <span className="font-bodoni text-3xl font-bold uppercase tracking-tighter text-stone-900">
-                  {currentStore?.name || 'DIGITALSTORE'}
-                </span>
-              )}
+              <img src={currentStore?.logoUrl || '/Digital.png'} alt={currentStore?.name || 'Digital Store'} className="h-10 md:h-12 w-auto object-contain" />
             </Link>
             <p className="font-jost text-sm text-stone-500 leading-relaxed max-w-xs">
               {currentStore?.description || 'Crafting timeless pieces for the modern individual. Quality, sustainability, and elegance in every detail.'}

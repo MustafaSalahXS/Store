@@ -67,19 +67,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       document.title = currentStore.name
     }
     
-    if (currentStore?.faviconUrl) {
-      const links = document.querySelectorAll("link[rel*='icon']")
-      
-      if (links.length > 0) {
-        links.forEach(link => {
-          (link as HTMLLinkElement).href = currentStore.faviconUrl!
-        })
-      } else {
-        const link = document.createElement('link')
-        link.rel = 'icon'
-        link.href = currentStore.faviconUrl
-        document.getElementsByTagName('head')[0].appendChild(link)
-      }
+    const fav = currentStore?.faviconUrl || '/Digital.png'
+    const links = document.querySelectorAll("link[rel*='icon']")
+    
+    if (links.length > 0) {
+      links.forEach(link => {
+        (link as HTMLLinkElement).href = fav
+      })
+    } else {
+      const link = document.createElement('link')
+      link.rel = 'icon'
+      link.href = fav
+      document.getElementsByTagName('head')[0].appendChild(link)
     }
   }, [currentStore?.faviconUrl, currentStore?.name])
 

@@ -14,11 +14,16 @@ router.get('/', async (req, res) => {
       // Create default settings if none exist
       settings = await prisma.storeSettings.create({
         data: {
-          name: 'My Store',
-          currency: 'USD',
+          name: 'DigitalStoreEG',
+          currency: 'EGP',
           slug: 'default-store',
+          logoUrl: '/Digital.png',
+          faviconUrl: '/Digital.png',
         },
       })
+    } else {
+      if (!settings.logoUrl) settings.logoUrl = '/Digital.png'
+      if (!settings.faviconUrl) settings.faviconUrl = '/Digital.png'
     }
     
     res.json(settings)

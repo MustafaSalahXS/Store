@@ -45,7 +45,8 @@ app.use(
 )
 app.use(express.json())
 
-// Serve uploads
+// Serve uploads and public assets
+app.use(express.static(path.join(process.cwd(), 'public')))
 app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')))
 
 // Health check

@@ -12,7 +12,9 @@ async function main() {
       name: 'Timeless Templates Official',
       slug: 'timeless-templates',
       description: 'Premium digital products and templates.',
-      currency: 'USD',
+      currency: 'EGP',
+      logoUrl: '/Digital.png',
+      faviconUrl: '/Digital.png',
     },
   })
 

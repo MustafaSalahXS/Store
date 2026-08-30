@@ -175,11 +175,11 @@ export default function SettingsSection({
               <div className="bg-secondary/20 p-3 sm:p-4 rounded-2xl border border-border flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl border border-border overflow-hidden flex items-center justify-center shrink-0 p-1 shadow-2xs">
-                    {storeSettings.logoUrl ? (
-                      <img src={storeSettings.logoUrl} alt="Store Logo" className="w-full h-full object-contain" />
-                    ) : (
-                      <ImageIcon className="w-5 h-5 text-muted-foreground" />
-                    )}
+                    <img 
+                      src={storeSettings.logoUrl || '/Digital.png'} 
+                      alt="Store Logo" 
+                      className="w-full h-full object-contain" 
+                    />
                   </div>
                   <div>
                     <span className="text-xs font-bold text-stone-900 block leading-tight">
@@ -213,11 +213,11 @@ export default function SettingsSection({
               <div className="bg-secondary/20 p-3 sm:p-4 rounded-2xl border border-border flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl border border-border overflow-hidden flex items-center justify-center shrink-0 p-2 shadow-2xs">
-                    {storeSettings.faviconUrl ? (
-                      <img src={storeSettings.faviconUrl} alt="Favicon" className="w-full h-full object-contain" />
-                    ) : (
-                      <Globe className="w-5 h-5 text-muted-foreground" />
-                    )}
+                    <img 
+                      src={storeSettings.faviconUrl || '/Digital.png'} 
+                      alt="Favicon" 
+                      className="w-full h-full object-contain" 
+                    />
                   </div>
                   <div>
                     <span className="text-xs font-bold text-stone-900 block leading-tight">

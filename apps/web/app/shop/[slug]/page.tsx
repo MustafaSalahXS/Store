@@ -78,17 +78,11 @@ export default function ShopPage() {
               animate={{ opacity: 1, y: 0 }}
               className="mb-4 inline-block"
             >
-              {store.logoUrl ? (
-                <img 
-                  src={store.logoUrl} 
-                  className="w-24 h-24 md:w-32 md:h-32 rounded-3xl object-cover border-4 border-background shadow-2xl mx-auto" 
-                  alt={store.name} 
-                />
-              ) : (
-                <div className="w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-background flex items-center justify-center shadow-2xl mx-auto">
-                  <Store className="w-10 h-10 text-primary" />
-                </div>
-              )}
+              <img 
+                src={store.logoUrl || '/Digital.png'} 
+                className="w-24 h-24 md:w-32 md:h-32 rounded-3xl object-contain p-2 bg-white border-4 border-background shadow-2xl mx-auto" 
+                alt={store.name} 
+              />
             </motion.div>
             <motion.h1 
               initial={{ opacity: 0, y: 10 }}

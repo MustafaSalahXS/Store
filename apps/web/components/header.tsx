@@ -74,7 +74,7 @@ export default function Header() {
     )
   }
 
-  const logo = currentStore?.logoUrl
+  const logo = currentStore?.logoUrl || '/Digital.png'
 
   return (
     <>
@@ -82,13 +82,7 @@ export default function Header() {
         <nav className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-24 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center hover:opacity-80 transition-opacity shrink-0 group">
-            {logo ? (
-              <img src={logo} alt={currentStore?.name || 'Store Logo'} className="h-7 md:h-12 w-auto object-contain" />
-            ) : (
-              <span className="font-bodoni text-2xl sm:text-3xl md:text-5xl font-bold tracking-tighter leading-none text-stone-900">
-                {currentStore?.name || 'DIGITALSTORE'}<span className="text-gold-500 group-hover:animate-pulse">.</span>
-              </span>
-            )}
+            <img src={logo} alt={currentStore?.name || 'Digital Store Logo'} className="h-8 md:h-12 w-auto object-contain" />
           </Link>
 
           {/* Desktop Navigation Links */}
