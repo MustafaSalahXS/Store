@@ -41,7 +41,7 @@ export default function MobileBottomNav({
   const pathname = usePathname()
   const { t, isRTL } = useLanguage()
   const { itemCount } = useCart()
-  const { wishlistCount } = useWishlist()
+  const { wishlistCount, showWishlistDrawer, setShowWishlistDrawer } = useWishlist()
   const [moreMenuOpen, setMoreMenuOpen] = useState(false)
 
   const isAdmin = pathname?.startsWith('/admin')
@@ -266,18 +266,21 @@ export default function MobileBottomNav({
 
   // Storefront Shopper Navigation Items
   const shopperItems = [
-    { href: '/', label: t('nav.home', 'Home'), icon: Home },
-    { href: '/products', label: t('nav.shop', 'Shop'), icon: Compass },
+    { id: 'home', href: '/', label: t('nav.home', isRTL ? 'الرئيسية' : 'Home'), icon: Home },
+    { id: 'shop', href: '/products', label: t('nav.shop', isRTL ? 'المتجر' : 'Shop'), icon: Compass },
     {
-      href: '/wishlist',
-      label: t('nav.wishlist', 'Wishlist'),
+      id: 'wishlist',
+      label: isRTL ? 'المفضلة' : t('nav.wishlist', 'Wishlist'),
       icon: Heart,
-      badge: wishlistCount > 0 ? wishlistCount : null
+      badge: wishlistCount > 0 ? wishlistCount : null,
+      onClick: () => setShowWishlistDrawer(true),
+      isActive: showWishlistDrawer
     },
-    { href: '/orders', label: t('nav.orders', 'Orders'), icon: Package },
+    { id: 'orders', href: '/orders', label: t('nav.orders', isRTL ? 'طلباتي' : 'Orders'), icon: Package },
     {
+      id: 'cart',
       href: '/checkout',
-      label: t('nav.cart', 'Cart'),
+      label: t('nav.cart', isRTL ? 'السلة' : 'Cart'),
       icon: ShoppingBag,
       badge: itemCount > 0 ? itemCount : null
     }
@@ -291,18 +294,15 @@ export default function MobileBottomNav({
       <div className="grid grid-cols-5 w-full items-center py-1 px-1">
         {shopperItems.map(item => {
           const Icon = item.icon
-          const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex flex-col items-center justify-center py-1 rounded-xl transition-all relative w-full ${
-                isActive ? 'text-primary font-black scale-105' : 'text-stone-400 hover:text-stone-600 font-medium'
-              }`}
-            >
+          const isActive = item.isActive !== undefined 
+            ? item.isActive 
+            : (item.href ? (pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))) : false)
+
+          const inner = (
+            <>
               <div className="relative">
                 <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-primary/10' : ''}`}>
-                  <Icon className="w-5 h-5" />
+                  <Icon className={`w-5 h-5 ${isActive && item.id === 'wishlist' ? 'fill-primary text-primary' : ''}`} />
                 </div>
                 {item.badge && (
                   <span className="absolute -top-1 -right-1.5 bg-primary text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md animate-pulse">
@@ -311,6 +311,34 @@ export default function MobileBottomNav({
                 )}
               </div>
               <span className="text-[10px] mt-0.5 tracking-tight truncate w-full text-center block">{item.label}</span>
+            </>
+          )
+
+          if (item.onClick) {
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={item.onClick}
+                className={`flex flex-col items-center justify-center py-1 rounded-xl transition-all relative w-full active:scale-95 ${
+                  isActive ? 'text-primary font-black scale-105' : 'text-stone-400 hover:text-stone-600 font-medium'
+                }`}
+                title={isRTL ? 'قائمة الرغبات والمفضلة' : 'Wishlist'}
+              >
+                {inner}
+              </button>
+            )
+          }
+
+          return (
+            <Link
+              key={item.id}
+              href={item.href!}
+              className={`flex flex-col items-center justify-center py-1 rounded-xl transition-all relative w-full active:scale-95 ${
+                isActive ? 'text-primary font-black scale-105' : 'text-stone-400 hover:text-stone-600 font-medium'
+              }`}
+            >
+              {inner}
             </Link>
           )
         })}

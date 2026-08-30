@@ -45,7 +45,7 @@ export default function WishlistDrawer() {
                 <div className="flex items-center gap-2">
                   <Heart className="w-5 h-5 text-rose-600 fill-rose-600" />
                   <h3 className="font-bodoni text-xl font-bold uppercase tracking-tight">
-                    {t('wishlist.title')}
+                    {t('wishlist.title', isRTL ? 'قائمة الرغبات والمفضلة' : 'Wishlist')}
                   </h3>
                   <span className="text-xs font-mono font-bold bg-rose-50 text-rose-700 px-2 py-0.5 rounded-full">
                     {wishlist.length}
