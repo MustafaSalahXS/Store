@@ -704,6 +704,22 @@ export default function ProductsPage() {
         </div>
       </main>
 
+      {/* Floating Action Button (FAB) for Mobile Filters */}
+      <button
+        type="button"
+        onClick={() => setIsMobileFilterOpen(true)}
+        className="lg:hidden fixed bottom-20 right-4 rtl:right-auto rtl:left-4 z-40 bg-stone-900/95 backdrop-blur-md text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2 font-black text-xs border border-white/20 active:scale-95 transition-all hover:scale-105"
+        aria-label={isRTL ? 'جميع الفلاتر' : 'All Filters'}
+      >
+        <SlidersHorizontal className="w-4 h-4 text-primary shrink-0" />
+        <span>{isRTL ? 'جميع الفلاتر' : 'All Filters'}</span>
+        {activeFiltersCount > 0 && (
+          <span className="bg-primary text-white text-[10px] px-2 py-0.5 rounded-full font-mono font-bold shrink-0 shadow-xs">
+            {activeFiltersCount}
+          </span>
+        )}
+      </button>
+
       {/* Mobile Filters Drawer Modal (Containing ALL Filters) */}
       <AnimatePresence>
         {isMobileFilterOpen && (

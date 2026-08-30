@@ -26,18 +26,18 @@ export default function CartToast() {
     const decrement = (step / duration) * 100
 
     const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev <= 0) {
-          clearInterval(interval)
-          dismissToast()
-          return 0
-        }
-        return prev - decrement
-      })
+      setProgress((prev) => Math.max(0, prev - decrement))
     }, step)
 
-    return () => clearInterval(interval)
-  }, [lastAddedToast?.timestamp])
+    const timer = setTimeout(() => {
+      dismissToast()
+    }, duration)
+
+    return () => {
+      clearInterval(interval)
+      clearTimeout(timer)
+    }
+  }, [lastAddedToast?.timestamp, dismissToast])
 
   if (!lastAddedToast) return null
 

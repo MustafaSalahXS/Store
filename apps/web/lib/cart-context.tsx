@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
 import { Product } from './types'
 
 export interface CartItem {
@@ -192,9 +192,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return item ? item.quantity : 0
   }
 
-  const dismissToast = () => {
+  const dismissToast = useCallback(() => {
     setLastAddedToast(null)
-  }
+  }, [])
 
   return (
     <CartContext.Provider
