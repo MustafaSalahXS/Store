@@ -51,7 +51,7 @@ export default function ContactPage() {
                        </div>
                        <div>
                          <div className="font-black text-[10px] uppercase tracking-[0.2em] text-stone-400 mb-1">Email Support</div>
-                         <div className="font-bodoni font-bold text-xl">{currentStore?.email || 'support@modernstore.com'}</div>
+                         <div className="font-bodoni font-bold text-xl">{(currentStore as any)?.email || 'support@modernstore.com'}</div>
                        </div>
                     </div>
 
@@ -61,7 +61,7 @@ export default function ContactPage() {
                        </div>
                        <div>
                          <div className="font-black text-[10px] uppercase tracking-[0.2em] text-stone-400 mb-1">Our Atelier</div>
-                         <div className="font-bodoni font-bold text-xl">{currentStore?.address || 'Cairo, Egypt'}</div>
+                         <div className="font-bodoni font-bold text-xl">{(currentStore as any)?.address || 'Cairo, Egypt'}</div>
                        </div>
                     </div>
                   </div>

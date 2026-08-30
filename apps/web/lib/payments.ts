@@ -95,7 +95,7 @@ export async function createOrder(
       notes,
     })
 
-    return data
+    return data as any
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error'
     console.error('Error creating order:', message, error)

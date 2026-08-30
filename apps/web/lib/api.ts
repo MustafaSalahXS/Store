@@ -73,8 +73,18 @@ export const api = {
 
   // ─── PRODUCTS ───────────────────────────────────────────
   products: {
-    list: (category?: string) =>
-      apiFetch<Product[]>(`/api/products${category ? `?category=${category}` : ''}`),
+    list: (params?: string | { category?: string; gender?: string; search?: string; limit?: number }) => {
+      if (typeof params === 'string') {
+        return apiFetch<Product[]>(`/api/products?category=${encodeURIComponent(params)}`)
+      }
+      const searchParams = new URLSearchParams()
+      if (params?.category) searchParams.append('category', params.category)
+      if (params?.gender) searchParams.append('gender', params.gender)
+      if (params?.search) searchParams.append('search', params.search)
+      if (params?.limit) searchParams.append('limit', String(params.limit))
+      const qs = searchParams.toString()
+      return apiFetch<Product[]>(`/api/products${qs ? `?${qs}` : ''}`)
+    },
 
     get: (id: string) => apiFetch<Product>(`/api/products/${id}`),
 
@@ -107,11 +117,27 @@ export const api = {
       return apiFetch<Order[]>(`/api/orders?${params.toString()}`)
     },
 
+    get: (id: string) => apiFetch<Order>(`/api/orders/${id}`),
+
     create: (data: any) =>
       apiFetch<Order>('/api/orders', { method: 'POST', body: JSON.stringify(data) }),
 
-    updateStatus: (id: string, data: { orderStatus?: string; paymentStatus?: string }) =>
+    updateStatus: (id: string, data: { orderStatus?: string; paymentStatus?: string; location?: string; trackingNumber?: string; deliveryStatus?: string }) =>
       apiFetch<Order>(`/api/orders/${id}/status`, { method: 'PATCH', body: JSON.stringify(data) }),
+
+    updateStatusAndDelivery: (id: string, data: { orderStatus?: string; assignedDriverId?: string; notes?: string; trackingNumber?: string }) =>
+      apiFetch<Order>(`/api/orders/${id}/status-and-delivery`, { method: 'PATCH', body: JSON.stringify(data) }),
+
+    financialMonthly: () =>
+      apiFetch<{
+        month: string
+        grossRevenue: number
+        cogsTotal: number
+        expensesTotal: number
+        netProfit: number
+        profitMargin: number
+        orderCount: number
+      }[]>('/api/orders/financial-monthly'),
   },
 
   // ─── SETTINGS ───────────────────────────────────────────
@@ -210,6 +236,53 @@ export const api = {
       apiFetch<Coupon>(`/api/coupons/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     delete: (id: string) =>
       apiFetch<{ success: boolean }>(`/api/coupons/${id}`, { method: 'DELETE' }),
+  },
+  // ─── STATS ─────────────────────────────────────────────
+  stats: {
+    get: () =>
+      apiFetch<{ userCount: number; productCount: number; orderCount: number }>(
+        '/api/admin/stats'
+      ),
+  },
+
+  // ─── DELIVERY ZONES ─────────────────────────────────────
+  deliveryZones: {
+    list: () => apiFetch<any[]>('/api/delivery-zones'),
+    create: (data: any) => apiFetch<any>('/api/delivery-zones', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: any) => apiFetch<any>(`/api/delivery-zones/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    delete: (id: string) => apiFetch<{ success: boolean }>(`/api/delivery-zones/${id}`, { method: 'DELETE' }),
+    seedDefaults: () => apiFetch<{ message: string; zones: any[] }>('/api/delivery-zones/seed-defaults', { method: 'POST' }),
+  },
+
+  // ─── EXPENSES & STAFF ───────────────────────────────────
+  expenses: {
+    list: (params?: { month?: string; category?: string; search?: string }) => {
+      const searchParams = new URLSearchParams()
+      if (params?.month) searchParams.append('month', params.month)
+      if (params?.category) searchParams.append('category', params.category)
+      if (params?.search) searchParams.append('search', params.search)
+      const qs = searchParams.toString()
+      return apiFetch<any[]>(`/api/expenses${qs ? `?${qs}` : ''}`)
+    },
+    monthlySummary: () => apiFetch<any[]>('/api/expenses/monthly-summary'),
+    create: (data: any) => apiFetch<any>('/api/expenses', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: any) => apiFetch<any>(`/api/expenses/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    delete: (id: string) => apiFetch<{ success: boolean }>(`/api/expenses/${id}`, { method: 'DELETE' }),
+  },
+
+  // ─── USER ADDRESSES ─────────────────────────────────────
+  addresses: {
+    list: (userId: string) => apiFetch<any[]>(`/api/addresses?userId=${encodeURIComponent(userId)}`),
+    create: (data: any) => apiFetch<any>('/api/addresses', { method: 'POST', body: JSON.stringify(data) }),
+    delete: (id: string) => apiFetch<{ success: boolean }>(`/api/addresses/${id}`, { method: 'DELETE' }),
+  },
+
+  // ─── STORE FILTERS & CATEGORIES ─────────────────────────
+  filters: {
+    list: () => apiFetch<any[]>('/api/filters'),
+    create: (data: any) => apiFetch<any>('/api/filters', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: any) => apiFetch<any>(`/api/filters/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    delete: (id: string) => apiFetch<{ success: boolean }>(`/api/filters/${id}`, { method: 'DELETE' }),
   },
 }
 

@@ -36,14 +36,9 @@ export default function Footer() {
               {currentStore?.logoUrl ? (
                 <img src={currentStore.logoUrl} alt={currentStore.name} className="h-10 md:h-12 w-auto object-contain" />
               ) : (
-                <div className="flex flex-col">
-                  <span className="font-bodoni text-3xl font-bold uppercase tracking-tighter text-stone-900">
-                    {currentStore?.name || 'DIGITALSTORE'}
-                  </span>
-                  <span className="font-jost text-[8px] font-bold tracking-[0.4em] uppercase text-gold-600 -mt-0.5">
-                    Luxury Classic
-                  </span>
-                </div>
+                <span className="font-bodoni text-3xl font-bold uppercase tracking-tighter text-stone-900">
+                  {currentStore?.name || 'DIGITALSTORE'}
+                </span>
               )}
             </Link>
             <p className="font-jost text-sm text-stone-500 leading-relaxed max-w-xs">

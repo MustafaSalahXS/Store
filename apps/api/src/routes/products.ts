@@ -10,11 +10,64 @@ type Product = any
 // GET /api/products
 router.get('/', async (req, res) => {
   try {
-    const { category, limit = '100', offset = '0' } = req.query
+    const { 
+      category, 
+      gender, 
+      search, 
+      size,
+      tag,
+      material,
+      minPrice,
+      maxPrice,
+      includeInactive,
+      limit = '100', 
+      offset = '0' 
+    } = req.query
 
-    const where = {
-      isActive: true,
-      ...(category ? { category: category as string } : {}),
+    const where: any = {}
+    if (includeInactive !== 'true') {
+      where.isActive = true
+    }
+
+    if (category) {
+      where.category = category as string
+    }
+
+    if (material) {
+      where.material = { contains: material as string, mode: 'insensitive' }
+    }
+
+    if (tag) {
+      where.tags = { has: tag as string }
+    }
+
+    if (size) {
+      where.sizes = { has: size as string }
+    }
+
+    if (minPrice || maxPrice) {
+      where.price = {}
+      if (minPrice) where.price.gte = Number(minPrice)
+      if (maxPrice) where.price.lte = Number(maxPrice)
+    }
+
+    if (gender) {
+      if (gender === 'men') {
+        where.OR = [{ gender: 'men' }, { gender: 'both' }]
+      } else if (gender === 'women') {
+        where.OR = [{ gender: 'women' }, { gender: 'both' }]
+      } else {
+        where.gender = gender as string
+      }
+    }
+
+    if (search) {
+      where.OR = [
+        ...(where.OR || []),
+        { name: { contains: search as string, mode: 'insensitive' } },
+        { description: { contains: search as string, mode: 'insensitive' } },
+        { category: { contains: search as string, mode: 'insensitive' } },
+      ]
     }
 
     const take = Math.min(Number(limit) || 100, 1000)
@@ -27,7 +80,16 @@ router.get('/', async (req, res) => {
       skip,
     })
 
-    res.json(products)
+    const formatted = products.map((p) => ({
+      ...p,
+      colors: (p.colors && Array.isArray(p.colors) && p.colors.length > 0)
+        ? p.colors
+        : ((p.customizationOptions as any)?.colors || []),
+      tags: Array.isArray(p.tags) ? p.tags : [],
+      isPastCollection: Boolean((p.customizationOptions as any)?.isPastCollection),
+    }))
+
+    res.json(formatted)
   } catch (error) {
     console.error('Get products error:', error)
     res.status(500).json({ error: 'Failed to fetch products' })
@@ -223,7 +285,14 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Product not found' })
     }
 
-    res.json(product)
+    res.json({
+      ...product,
+      colors: (product.colors && Array.isArray(product.colors) && product.colors.length > 0)
+        ? product.colors
+        : ((product.customizationOptions as any)?.colors || []),
+      tags: Array.isArray(product.tags) ? product.tags : [],
+      isPastCollection: Boolean((product.customizationOptions as any)?.isPastCollection),
+    })
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch product' })
   }
@@ -232,47 +301,110 @@ router.get('/:id', async (req, res) => {
 // CREATE
 router.post('/', async (req, res) => {
   try {
+    const { isPastCollection, colors, tags, material, ...rest } = req.body
+    const customization = {
+      ...(req.body.customizationOptions || {}),
+      ...(colors ? { colors } : {}),
+      ...(isPastCollection !== undefined ? { isPastCollection } : {}),
+    }
+
     const product = await prisma.product.create({
       data: {
-        ...req.body,
-        description: req.body.description || '',
-        stock: req.body.stock || 0,
-        cost: req.body.cost || 0,
-        isActive: req.body.isActive !== false,
-        image: req.body.image || null,
-        images: req.body.images || [],
-        videoUrl: req.body.videoUrl || null,
-        hasCounter: req.body.hasCounter ?? true,
-        ctaText: req.body.ctaText || 'Add to Cart',
-        directCheckout: req.body.directCheckout ?? false,
-        trackStock: req.body.trackStock ?? true,
-        discountActive: req.body.discountActive ?? false,
-        discountPercentage: req.body.discountPercentage || 0,
-        sizes: req.body.sizes || [],
-        gender: req.body.gender || 'both',
-        isAccessory: req.body.isAccessory ?? false,
-        isFootwear: req.body.isFootwear ?? false,
-        isCurated: req.body.isCurated ?? false,
+        name: rest.name,
+        description: rest.description || '',
+        price: rest.price,
+        discountPrice: rest.discountPrice ? Number(rest.discountPrice) : null,
+        cost: rest.cost ? Number(rest.cost) : 0,
+        category: rest.category || null,
+        sku: rest.sku || null,
+        stock: rest.stock ? Number(rest.stock) : 0,
+        isActive: rest.isActive !== false,
+        image: rest.image || null,
+        images: rest.images || [],
+        videoUrl: rest.videoUrl || null,
+        colors: Array.isArray(colors) ? colors : [],
+        tags: Array.isArray(tags) ? tags : [],
+        material: material || null,
+        hasCounter: rest.hasCounter ?? true,
+        ctaText: rest.ctaText || 'Add to Cart',
+        directCheckout: rest.directCheckout ?? false,
+        trackStock: rest.trackStock ?? true,
+        discountActive: rest.discountActive ?? false,
+        discountPercentage: rest.discountPercentage ? Number(rest.discountPercentage) : 0,
+        sizes: Array.isArray(rest.sizes) ? rest.sizes : [],
+        gender: rest.gender || 'both',
+        isAccessory: rest.isAccessory ?? false,
+        isFootwear: rest.isFootwear ?? false,
+        isCurated: rest.isCurated ?? false,
+        customizationOptions: Object.keys(customization).length > 0 ? customization : null,
       },
     })
 
-    res.status(201).json(product)
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create product' })
+    res.status(201).json({
+      ...product,
+      colors: (product.colors && Array.isArray(product.colors) && product.colors.length > 0)
+        ? product.colors
+        : ((product.customizationOptions as any)?.colors || []),
+      tags: Array.isArray(product.tags) ? product.tags : [],
+      isPastCollection: Boolean((product.customizationOptions as any)?.isPastCollection),
+    })
+  } catch (error: any) {
+    console.error('Create product error:', error)
+    res.status(500).json({ error: error?.message || 'Failed to create product' })
   }
 })
 
 // UPDATE
 router.put('/:id', async (req, res) => {
   try {
+    const { isPastCollection, colors, tags, material, ...rest } = req.body
+    const existing = await prisma.product.findUnique({ where: { id: req.params.id } })
+    const existingCustomization = (existing?.customizationOptions as any) || {}
+    const customization = {
+      ...existingCustomization,
+      ...(req.body.customizationOptions || {}),
+      ...(colors ? { colors } : {}),
+      ...(isPastCollection !== undefined ? { isPastCollection } : {}),
+    }
+
+    const data: any = {}
+    if (rest.name !== undefined) data.name = rest.name
+    if (rest.description !== undefined) data.description = rest.description
+    if (rest.price !== undefined) data.price = rest.price
+    if (rest.discountPrice !== undefined) data.discountPrice = rest.discountPrice ? Number(rest.discountPrice) : null
+    if (rest.cost !== undefined) data.cost = rest.cost ? Number(rest.cost) : 0
+    if (rest.category !== undefined) data.category = rest.category
+    if (rest.sku !== undefined) data.sku = rest.sku
+    if (rest.stock !== undefined) data.stock = rest.stock ? Number(rest.stock) : 0
+    if (rest.isActive !== undefined) data.isActive = rest.isActive
+    if (rest.image !== undefined) data.image = rest.image
+    if (rest.images !== undefined) data.images = rest.images
+    if (rest.videoUrl !== undefined) data.videoUrl = rest.videoUrl
+    if (rest.sizes !== undefined) data.sizes = rest.sizes
+    if (rest.gender !== undefined) data.gender = rest.gender
+    if (colors !== undefined) data.colors = Array.isArray(colors) ? colors : []
+    if (tags !== undefined) data.tags = Array.isArray(tags) ? tags : []
+    if (material !== undefined) data.material = material
+    if (Object.keys(customization).length > 0) {
+      data.customizationOptions = customization
+    }
+
     const product = await prisma.product.update({
       where: { id: req.params.id },
-      data: req.body,
+      data,
     })
 
-    res.json(product)
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to update product' })
+    res.json({
+      ...product,
+      colors: (product.colors && Array.isArray(product.colors) && product.colors.length > 0)
+        ? product.colors
+        : ((product.customizationOptions as any)?.colors || []),
+      tags: Array.isArray(product.tags) ? product.tags : [],
+      isPastCollection: Boolean((product.customizationOptions as any)?.isPastCollection),
+    })
+  } catch (error: any) {
+    console.error('Update product error:', error)
+    res.status(500).json({ error: error?.message || 'Failed to update product' })
   }
 })
 
@@ -284,8 +416,8 @@ router.delete('/:id', async (req, res) => {
     })
 
     res.json({ success: true })
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete product' })
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message || 'Failed to delete product' })
   }
 })
 

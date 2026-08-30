@@ -91,17 +91,36 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' })
     }
 
-    // Fetch user profile from our DB
-    const user = await prisma.user.findUnique({
+    // Fetch user profile from our DB, or auto-provision if missing
+    let user = await prisma.user.findUnique({
       where: { id: data.user.id },
     })
+
+    if (!user) {
+      try {
+        const name = data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'Customer'
+        const role = (data.user.user_metadata?.role as string) || (data.user.email?.includes('admin') ? 'admin' : 'customer')
+        user = await prisma.user.create({
+          data: {
+            id: data.user.id,
+            email: data.user.email || '',
+            name,
+            role,
+            phone: data.user.phone || null,
+            isActive: true,
+          },
+        })
+      } catch (createErr) {
+        console.warn('Could not auto-create user profile during login:', createErr)
+      }
+    }
 
     res.json({
       success: true,
       user: {
         id: data.user.id,
         email: data.user.email,
-        name: user?.name || data.user.user_metadata.name,
+        name: user?.name || data.user.user_metadata?.name || 'Customer',
         role: user?.role || 'customer',
       },
       session: {
@@ -132,11 +151,29 @@ router.get('/me', async (req, res) => {
     const { data: { user: authUser }, error } = await supabaseClient.auth.getUser(token)
     if (error || !authUser) return res.status(401).json({ error: 'Invalid token' })
 
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: { id: authUser.id },
     })
 
-    if (!user) return res.status(404).json({ error: 'User not found' })
+    if (!user) {
+      try {
+        const name = authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'Customer'
+        const role = (authUser.user_metadata?.role as string) || (authUser.email?.includes('admin') ? 'admin' : 'customer')
+        user = await prisma.user.create({
+          data: {
+            id: authUser.id,
+            email: authUser.email || '',
+            name,
+            role,
+            phone: authUser.phone || null,
+            isActive: true,
+          },
+        })
+      } catch (createErr) {
+        console.error('Could not auto-create user in /me:', createErr)
+        return res.status(404).json({ error: 'User not found' })
+      }
+    }
 
     res.json({
       id: user.id,

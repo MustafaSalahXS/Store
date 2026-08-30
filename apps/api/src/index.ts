@@ -12,6 +12,10 @@ import { uploadRouter } from './routes/upload.js'
 import { paymentsRouter } from './routes/payments.js'
 import { bannersRouter } from './routes/banners.js'
 import couponsRouter from './routes/coupons.js'
+import deliveryZonesRouter from './routes/delivery-zones.js'
+import expensesRouter from './routes/expenses.js'
+import addressesRouter from './routes/addresses.js'
+import filtersRouter from './routes/filters.js'
 
 const app = express()
 const PORT = process.env.PORT || 4000
@@ -79,6 +83,10 @@ app.use('/api/upload', uploadRouter)
 app.use('/api/payments', paymentsRouter)
 app.use('/api/banners', bannersRouter)
 app.use('/api/coupons', couponsRouter)
+app.use('/api/delivery-zones', deliveryZonesRouter)
+app.use('/api/expenses', expensesRouter)
+app.use('/api/addresses', addressesRouter)
+app.use('/api/filters', filtersRouter)
 
 // Start local server only outside Vercel serverless runtime
 if (!process.env.VERCEL) {

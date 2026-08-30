@@ -72,10 +72,10 @@ export default function SettingsPage() {
           address: data.address || '',
           city: data.city || '',
           country: data.country || '',
-          postal_code: data.postal_code || '',
-          logo_url: data.logo_url || '',
-          favicon_url: data.favicon_url || '',
-          enable_receipts: data.enable_receipts ?? true
+          postal_code: (data as any).postal_code || '',
+          logo_url: (data as any).logo_url || '',
+          favicon_url: (data as any).favicon_url || '',
+          enable_receipts: (data as any).enable_receipts ?? true
         })
       }
     } catch (err) {
@@ -149,13 +149,13 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Store Settings</h1>
-            <p className="text-slate-600">Configure your store information</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Store Settings</h1>
+            <p className="text-xs sm:text-sm text-slate-600">Configure your store information</p>
           </div>
-          <Link href="/admin">
-            <Button>Back to Admin</Button>
+          <Link href="/admin" className="self-start sm:self-auto">
+            <Button size="sm">Back to Admin</Button>
           </Link>
         </div>
       </div>

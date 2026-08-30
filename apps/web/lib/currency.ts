@@ -10,15 +10,16 @@ export const CURRENCIES: { code: CurrencyCode; name: string; symbol: string; loc
 
 export function formatPrice(price: number | string, currencyCode: string = 'USD') {
   const amount = Number(price)
+  const safeAmount = isNaN(amount) ? 0 : amount
   const currency = CURRENCIES.find(c => c.code === currencyCode) || CURRENCIES[1] // Default USD
 
   try {
     return new Intl.NumberFormat(currency.locale, {
       style: 'currency',
       currency: currency.code,
-    }).format(amount)
+    }).format(safeAmount)
   } catch (e) {
     // Fallback if locale/currency combo fails
-    return `${currency.symbol}${amount.toFixed(2)}`
+    return `${currency.symbol}${safeAmount.toFixed(2)}`
   }
 }

@@ -2,11 +2,20 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@font-face {
+  font-family: 'Ramis Arabic';
+  src: url('/fonts/Ramis-Arabic.otf') format('opentype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-sans: "Jost", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Bodoni Moda", ui-serif, Georgia, serif;
   --font-bodoni: "Bodoni Moda", ui-serif, Georgia, serif;
   --font-jost: "Jost", ui-sans-serif, system-ui, sans-serif;
+  --font-ramis: "Ramis Arabic", "Jost", sans-serif;
 
   --color-stone-900: #1C1917;
   --color-stone-800: #292524;
@@ -18,6 +27,8 @@
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-muted: var(--muted);
@@ -30,6 +41,8 @@
   :root {
     --background: #FAFAF9;
     --foreground: #1C1917;
+    --card: #FFFFFF;
+    --card-foreground: #1C1917;
     --primary: #CA8A04;
     --secondary: #E7E5E4;
     --muted: #F5F5F4;
@@ -41,6 +54,8 @@
   .dark {
     --background: #1C1917;
     --foreground: #FAFAF9;
+    --card: #1C1917;
+    --card-foreground: #FAFAF9;
     --primary: #CA8A04;
     --secondary: #292524;
     --muted: #292524;
@@ -53,8 +68,36 @@
     @apply border-border;
   }
 
+  html,
+  body,
+  #app-root {
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  /* Arabic Luxury Typography with Ramis Arabic */
+  [dir="rtl"], html[lang="ar"], body.rtl {
+    font-family: 'Ramis Arabic', 'Jost', sans-serif !important;
+  }
+
+  [dir="rtl"] .font-bodoni,
+  [dir="rtl"] .font-serif,
+  html[lang="ar"] .font-bodoni,
+  html[lang="ar"] .font-serif {
+    font-family: 'Ramis Arabic', 'Bodoni Moda', serif !important;
+    letter-spacing: 0 !important;
+  }
+
+  [dir="rtl"] .font-jost,
+  [dir="rtl"] .font-sans,
+  html[lang="ar"] .font-jost,
+  html[lang="ar"] .font-sans {
+    font-family: 'Ramis Arabic', 'Jost', sans-serif !important;
   }
 }
 

@@ -104,13 +104,13 @@ export default function StaffPage() {
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Staff Management</h1>
-            <p className="text-slate-600">Invite and manage your team</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Staff Management</h1>
+            <p className="text-xs sm:text-sm text-slate-600">Invite and manage your team</p>
           </div>
-          <Link href="/admin">
-            <Button>Back to Admin</Button>
+          <Link href="/admin" className="self-start sm:self-auto">
+            <Button size="sm">Back to Admin</Button>
           </Link>
         </div>
       </div>
@@ -133,21 +133,21 @@ export default function StaffPage() {
         )}
 
         {/* Invite Form */}
-        <Card className="p-6 mb-6">
-          <h2 className="text-lg font-bold text-slate-900 mb-4">Invite New Staff Member</h2>
-          <form onSubmit={handleInvite} className="flex gap-4 flex-wrap">
+        <Card className="p-4 sm:p-6 mb-6">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-4">Invite New Staff Member</h2>
+          <form onSubmit={handleInvite} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Input
               type="email"
               placeholder="Email address"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
               required
-              className="flex-1 min-w-[200px]"
+              className="flex-1"
             />
             <select
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value)}
-              className="px-3 py-2 border border-slate-300 rounded-lg text-slate-900"
+              className="px-3 py-2 border border-slate-300 rounded-lg text-slate-900 text-sm"
             >
               <option value="delivery_personnel">Delivery Personnel</option>
               <option value="accountant">Accountant</option>
@@ -156,7 +156,7 @@ export default function StaffPage() {
             <Button
               type="submit"
               disabled={inviting || !inviteEmail}
-              className="flex items-center gap-2"
+              className="flex items-center justify-center gap-2"
             >
               {inviting ? (
                 <>
@@ -178,20 +178,20 @@ export default function StaffPage() {
           <div className="space-y-4">
             {staff.map(member => (
               <Card key={member.id} className="p-4 hover:shadow transition">
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-slate-900">
+                    <h3 className="font-semibold text-slate-900 text-sm sm:text-base">
                       {member.first_name} {member.last_name}
                     </h3>
-                    <p className="text-slate-600 flex items-center gap-2">
-                      <Mail className="w-4 h-4" />
+                    <p className="text-slate-600 flex items-center gap-2 text-xs sm:text-sm">
+                      <Mail className="w-3.5 h-3.5" />
                       {member.email}
                     </p>
                     {member.phone && (
-                      <p className="text-slate-600 text-sm">{member.phone}</p>
+                      <p className="text-slate-600 text-xs">{member.phone}</p>
                     )}
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 sm:gap-4 self-start sm:self-auto flex-wrap">
                     <Badge className={`${roleColors[member.role]}`}>
                       {member.role.replace('_', ' ').toUpperCase()}
                     </Badge>

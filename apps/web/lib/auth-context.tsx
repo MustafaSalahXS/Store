@@ -159,6 +159,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     await supabase.auth.signOut()
     localStorage.removeItem('auth-token')
+    try {
+      localStorage.removeItem('store_wishlist_guest')
+      localStorage.removeItem('store_wishlist')
+    } catch {}
     setUser(null)
   }
 

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useCart } from '@/lib/cart-context'
 import { useStore } from '@/lib/store-context'
+import { useLanguage } from '@/lib/language-context'
 import { formatPrice } from '@/lib/currency'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingCart, X, Plus, Minus, ShoppingBag } from 'lucide-react'
@@ -11,6 +12,7 @@ import { ShoppingCart, X, Plus, Minus, ShoppingBag } from 'lucide-react'
 export default function CartDropdown() {
   const { items, total, removeFromCart, updateQuantity } = useCart()
   const { currentStore } = useStore()
+  const { t, isRTL } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
 
   const currency = currentStore?.currency || 'USD'
@@ -22,7 +24,7 @@ export default function CartDropdown() {
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2.5 bg-stone-900 text-stone-50 rounded-xl hover:bg-stone-800 transition-all shadow-xl"
-        aria-label="Shopping cart"
+        aria-label={t('cart.title', 'Shopping bag')}
       >
         <ShoppingBag className="w-4.5 h-4.5" />
         {items.length > 0 && (
@@ -44,12 +46,12 @@ export default function CartDropdown() {
               initial={{ opacity: 0, scale: 0.9, y: -20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: -20 }}
-              className="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-[4.5rem] sm:top-16 w-[calc(100vw-2rem)] sm:w-[24rem] bg-white border border-stone-100 rounded-[2.5rem] sm:rounded-[2rem] shadow-[0_40px_120px_rgba(0,0,0,0.25)] z-50 overflow-hidden"
+              className={`fixed sm:absolute ${isRTL ? 'left-4 right-4 sm:left-0 sm:right-auto' : 'left-4 right-4 sm:left-auto sm:right-0'} top-[4.5rem] sm:top-16 w-[calc(100vw-2rem)] sm:w-[24rem] bg-white border border-stone-100 rounded-[2.5rem] sm:rounded-[2rem] shadow-[0_40px_120px_rgba(0,0,0,0.25)] z-50 overflow-hidden`}
             >
               <div className="p-6 border-b border-stone-50 flex justify-between items-center">
                 <div className="flex flex-col">
-                  <h3 className="font-bodoni text-xl font-bold tracking-tight uppercase">Your Bag</h3>
-                  <span className="font-jost text-[9px] font-bold text-gold-600 uppercase tracking-widest">{items.length} Items Selected</span>
+                  <h3 className="font-bodoni text-xl font-bold tracking-tight uppercase">{t('cart.title', 'Your Bag')}</h3>
+                  <span className="font-jost text-[9px] font-bold text-gold-600 uppercase tracking-widest">{items.length} {t('Items Selected', 'قطع مختارة')}</span>
                 </div>
                 <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-stone-50 rounded-full transition-colors text-stone-400"><X className="w-4 h-4" /></button>
               </div>
@@ -60,8 +62,8 @@ export default function CartDropdown() {
                     <div className="w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center mx-auto">
                       <ShoppingBag className="w-6 h-6 text-stone-200" />
                     </div>
-                    <p className="font-bodoni text-lg font-bold text-stone-300 uppercase tracking-widest">Your bag is empty</p>
-                    <button onClick={() => setIsOpen(false)} className="font-jost text-[9px] font-bold text-gold-600 uppercase tracking-widest border-b border-gold-200">Start Shopping</button>
+                    <p className="font-bodoni text-lg font-bold text-stone-300 uppercase tracking-widest">{t('cart.empty', 'Your bag is empty')}</p>
+                    <button onClick={() => setIsOpen(false)} className="font-jost text-[9px] font-bold text-gold-600 uppercase tracking-widest border-b border-gold-200">{t('cart.continueShopping', 'Start Shopping')}</button>
                   </div>
                 ) : (
                   items.map((item) => (
@@ -83,7 +85,7 @@ export default function CartDropdown() {
                           <div className="flex items-center gap-2">
                              <p className="font-jost text-[10px] font-bold text-gold-600">{formatPrice(item.product.discountPrice || item.product.price, currency)}</p>
                              {item.size && (
-                               <span className="font-jost text-[8px] font-black bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded-sm uppercase tracking-tighter">Size: {item.size}</span>
+                               <span className="font-jost text-[8px] font-black bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded-sm uppercase tracking-tighter">{t('Size')}: {item.size}</span>
                              )}
                           </div>
                         </div>
@@ -93,7 +95,7 @@ export default function CartDropdown() {
                              <span className="text-[9px] font-bold min-w-[1rem] text-center text-stone-900">{item.quantity}</span>
                              <button onClick={() => updateQuantity(item.productId, item.quantity + 1, item.size)} className="text-stone-400 hover:text-stone-900 transition-colors text-xs font-bold">+</button>
                           </div>
-                          <button onClick={() => removeFromCart(item.productId, item.size)} className="text-[9px] font-bold text-stone-300 hover:text-red-500 transition-all uppercase tracking-widest">Remove</button>
+                          <button onClick={() => removeFromCart(item.productId, item.size)} className="text-[9px] font-bold text-stone-300 hover:text-red-500 transition-all uppercase tracking-widest">{t('cart.removeItem', 'Remove')}</button>
                         </div>
                       </div>
                     </div>
@@ -104,7 +106,7 @@ export default function CartDropdown() {
               {items.length > 0 && (
                 <div className="p-6 bg-stone-50 border-t border-stone-100 space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="font-jost text-[9px] font-black uppercase tracking-[0.2em] text-stone-400">Estimated Total</span>
+                    <span className="font-jost text-[9px] font-black uppercase tracking-[0.2em] text-stone-400">{t('cart.total', 'Estimated Total')}</span>
                     <span className="font-bodoni text-xl font-bold text-stone-900">{formatPrice(total, currency)}</span>
                   </div>
                   <Link
@@ -112,7 +114,7 @@ export default function CartDropdown() {
                     onClick={() => setIsOpen(false)}
                     className="block w-full py-4 bg-stone-900 text-white font-jost font-bold text-[10px] uppercase tracking-[0.3em] text-center shadow-xl hover:bg-gold-600 transition-all rounded-xl"
                   >
-                    Proceed to Checkout
+                    {t('cart.checkout', 'Proceed to Checkout')}
                   </Link>
                 </div>
               )}

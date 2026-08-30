@@ -1,13 +1,14 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import { ARABIC_DICTIONARY, FRENCH_DICTIONARY, GERMAN_DICTIONARY } from './i18n-dictionary'
 
 type Language = 'en' | 'ar' | 'fr' | 'de'
 
 interface LanguageContextType {
   language: Language
   setLanguage: (lang: Language) => void
-  t: (key: string) => string
+  t: (key: string, fallback?: string) => string
   isRTL: boolean
 }
 
@@ -46,11 +47,16 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         }
         setTranslations(data)
 
-        // Set document direction and lang attribute (Always LTR)
+        // Set document direction, lang attribute and Ramis Arabic styling
         if (typeof document !== 'undefined') {
+          const isArabic = savedLanguage === 'ar'
           document.documentElement.lang = savedLanguage
-          document.documentElement.dir = 'ltr'
-          document.body.classList.remove('rtl')
+          document.documentElement.dir = isArabic ? 'rtl' : 'ltr'
+          if (isArabic) {
+            document.body.classList.add('rtl')
+          } else {
+            document.body.classList.remove('rtl')
+          }
         }
       } catch (error) {
         console.error('Error loading translations:', error)
@@ -75,19 +81,27 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       setTranslations(data)
       setLanguageState(lang)
 
-      // Update document (Always LTR)
+      // Update document direction, lang attribute and Ramis Arabic styling
       if (typeof document !== 'undefined') {
+        const isArabic = lang === 'ar'
         document.documentElement.lang = lang
-        document.documentElement.dir = 'ltr'
-        document.body.classList.remove('rtl')
+        document.documentElement.dir = isArabic ? 'rtl' : 'ltr'
+        if (isArabic) {
+          document.body.classList.add('rtl')
+        } else {
+          document.body.classList.remove('rtl')
+        }
       }
     } catch (error) {
       console.error('Error switching language:', error)
     }
   }
 
-  // Translation function with dot notation support (e.g., 'common.home')
-  const t = (key: string): string => {
+  // Translation function with dot notation and dictionary fallback support
+  const t = (key: string, fallback?: string): string => {
+    if (!key) return fallback || ''
+
+    // 1. Try dot-notation lookup in loaded JSON translations
     const keys = key.split('.')
     let value: any = translations
 
@@ -95,29 +109,62 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       if (value && typeof value === 'object') {
         value = value[k]
       } else {
-        return key // Return key if translation not found
+        value = undefined
+        break
       }
     }
 
-    return typeof value === 'string' ? value : key
+    if (typeof value === 'string' && value.trim() && value !== key) {
+      return value
+    }
+
+    // 2. Multilingual dictionary fallback
+    const normKey = key.trim().toLowerCase()
+    const normFallback = fallback ? fallback.trim().toLowerCase() : ''
+    const lastSegment = keys.length > 1 ? keys[keys.length - 1].trim().toLowerCase() : ''
+
+    if (language === 'ar') {
+      if (ARABIC_DICTIONARY[normKey]) return ARABIC_DICTIONARY[normKey]
+      if (lastSegment && ARABIC_DICTIONARY[lastSegment]) return ARABIC_DICTIONARY[lastSegment]
+      if (normFallback && ARABIC_DICTIONARY[normFallback]) return ARABIC_DICTIONARY[normFallback]
+    } else if (language === 'fr') {
+      if (FRENCH_DICTIONARY[normKey]) return FRENCH_DICTIONARY[normKey]
+      if (lastSegment && FRENCH_DICTIONARY[lastSegment]) return FRENCH_DICTIONARY[lastSegment]
+      if (normFallback && FRENCH_DICTIONARY[normFallback]) return FRENCH_DICTIONARY[normFallback]
+    } else if (language === 'de') {
+      if (GERMAN_DICTIONARY[normKey]) return GERMAN_DICTIONARY[normKey]
+      if (lastSegment && GERMAN_DICTIONARY[lastSegment]) return GERMAN_DICTIONARY[lastSegment]
+      if (normFallback && GERMAN_DICTIONARY[normFallback]) return GERMAN_DICTIONARY[normFallback]
+    }
+
+    if (fallback) return fallback
+
+    // If key had dots and wasn't found, NEVER return the raw 'feed.categories.xxx' to the user!
+    if (keys.length > 1) {
+      const seg = keys[keys.length - 1].replace(/[-_]/g, ' ')
+      return seg.charAt(0).toUpperCase() + seg.slice(1)
+    }
+
+    return key
   }
 
+  const isRTL = language === 'ar'
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, isRTL: false }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, isRTL }}>
       {children}
     </LanguageContext.Provider>
   )
 }
 
-export function useLanguage(): LanguageContextType {
+export function useLanguage() {
   const context = useContext(LanguageContext)
-  if (context === undefined) {
-    throw new Error('useLanguage must be used within LanguageProvider')
+  if (!context) {
+    throw new Error('useLanguage must be used within a LanguageProvider')
   }
   return context
 }
 
-// Convenience hook for just translations
 export function useTranslations() {
   const { t } = useLanguage()
   return t

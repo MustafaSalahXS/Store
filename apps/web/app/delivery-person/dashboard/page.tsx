@@ -18,7 +18,7 @@ const STATUS_CONFIG = {
 }
 
 export default function DeliveryPersonDashboard() {
-  const { user, loading: authLoading } = useAuth()
+  const { user, isLoading: authLoading } = useAuth()
   const [assignments, setAssignments] = useState<Delivery[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedDelivery, setSelectedDelivery] = useState<Delivery | null>(null)
@@ -26,7 +26,7 @@ export default function DeliveryPersonDashboard() {
 
   useEffect(() => {
     const loadAssignments = async () => {
-      if (!user || user.role !== 'delivery_person') {
+      if (!user || (user.role as string) !== 'delivery_person') {
         setIsLoading(false)
         return
       }
@@ -77,7 +77,7 @@ export default function DeliveryPersonDashboard() {
     )
   }
 
-  if (!user || user.role !== 'delivery_person') {
+  if (!user || (user.role as string) !== 'delivery_person') {
     return (
       <div className="min-h-screen bg-background">
         <Header />

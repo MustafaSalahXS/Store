@@ -1,5 +1,5 @@
 export type PaymentMethod = 'card' | 'vodafone_cash' | 'instapay' | 'whatsapp'
-export type PaymentStatus = 'pending' | 'confirmed' | 'failed' | 'refunded'
+export type PaymentStatus = 'pending' | 'confirmed' | 'failed' | 'refunded' | 'paid' | 'unpaid' | 'pending_verification'
 export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'approved' | 'declined'
 
 export interface Product {
@@ -30,6 +30,9 @@ export interface Product {
   isAccessory: boolean
   isFootwear: boolean
   isCurated: boolean
+  colors?: Array<{ name: string; hex: string; image?: string }>
+  isPastCollection?: boolean
+  fabricDetails?: { composition?: string; care?: string; origin?: string; weight?: string }
   createdAt: string
   updatedAt: string
 }
@@ -51,6 +54,7 @@ export interface Order {
   createdAt: string
   updatedAt: string
   items?: OrderItem[]
+  deliveries?: any[]
 }
 
 export interface OrderItem {
@@ -61,6 +65,7 @@ export interface OrderItem {
   quantity: number
   unitPrice: number
   totalPrice: number
+  selectedSize?: string
   customizations?: any
 }
 

@@ -60,13 +60,13 @@ export default function FinancesPage() {
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Financial Reports</h1>
-            <p className="text-slate-600">Monitor your store's financial performance</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Financial Reports</h1>
+            <p className="text-xs sm:text-sm text-slate-600">Monitor your store's financial performance</p>
           </div>
-          <Link href="/admin">
-            <Button>Back to Admin</Button>
+          <Link href="/admin" className="self-start sm:self-auto">
+            <Button size="sm">Back to Admin</Button>
           </Link>
         </div>
       </div>
@@ -83,13 +83,13 @@ export default function FinancesPage() {
         )}
 
         {/* Date Range & Export */}
-        <Card className="p-4 mb-6 flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex gap-2">
+        <Card className="p-3 sm:p-4 mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar scrollbar-none pb-1">
             {['7days', '30days', '90days', 'all'].map(range => (
               <button
                 key={range}
                 onClick={() => setDateRange(range)}
-                className={`px-4 py-2 rounded-lg font-medium transition ${
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition shrink-0 ${
                   dateRange === range
                     ? 'bg-blue-600 text-white'
                     : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
@@ -102,14 +102,14 @@ export default function FinancesPage() {
               </button>
             ))}
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition">
+          <button className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition text-xs sm:text-sm">
             <Download className="w-4 h-4" />
             Export Report
           </button>
         </Card>
 
         {/* Revenue Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <p className="text-slate-600 text-sm">Total Revenue</p>

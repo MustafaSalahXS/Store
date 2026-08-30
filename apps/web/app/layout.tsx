@@ -4,15 +4,19 @@ import { Analytics } from '@vercel/analytics/react'
 import { AuthProvider } from '@/lib/auth-context'
 import { StoreProvider } from '@/lib/store-context'
 import { CartProvider } from '@/lib/cart-context'
+import { WishlistProvider } from '@/lib/wishlist-context'
 import { LanguageProvider } from '@/lib/language-context'
+import CartToast from '@/components/ui/cart-toast'
+import WishlistDrawer from '@/components/wishlist-drawer'
+import MobileBottomNav from '@/components/mobile-bottom-nav'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Modern Store - Premium Digital Products',
-  description: 'Shop beautiful digital products with customizable themes and colors. Modern design, fast delivery, lifetime access.',
+  title: 'DigitalStore - Luxury Haute Couture & Tailoring',
+  description: 'Quiet opulence, bespoke sartorial tailoring, and archived collections.',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -46,9 +50,14 @@ export default function RootLayout({
           <AuthProvider>
             <StoreProvider>
               <CartProvider>
-                <div suppressHydrationWarning id="app-root">
-                  {children}
-                </div>
+                <WishlistProvider>
+                  <div suppressHydrationWarning id="app-root">
+                    {children}
+                  </div>
+                  <CartToast />
+                  <WishlistDrawer />
+                  <MobileBottomNav />
+                </WishlistProvider>
               </CartProvider>
             </StoreProvider>
           </AuthProvider>

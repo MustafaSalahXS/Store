@@ -1,110 +1,211 @@
 'use client'
 
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import LoginForm from '@/components/auth/login-form'
-import { motion } from 'framer-motion'
-import { Check, Shield } from 'lucide-react'
+import RegisterForm from '@/components/auth/register-form'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Check, ArrowLeft, ArrowRight, Sparkles, ShieldCheck } from 'lucide-react'
 import { useStore } from '@/lib/store-context'
-import { Suspense } from 'react'
+import { useLanguage } from '@/lib/language-context'
+import { LanguageSwitcher } from '@/components/language-switcher'
 
-function LoginContent() {
+function AuthContent() {
   const searchParams = useSearchParams()
   const { currentStore } = useStore()
+  const { t, isRTL } = useLanguage()
+  const initialTab = searchParams.get('mode') === 'register' ? 'register' : 'login'
   const isRegistered = searchParams.get('registered') === 'true'
+  const redirect = searchParams.get('redirect')
+
+  const [activeTab, setActiveTab] = useState<'login' | 'register'>(initialTab)
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Background Decor */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl -z-10">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-[120px] animate-pulse delay-1000" />
+    <div className="min-h-screen bg-background flex flex-col lg:flex-row">
+      {/* Left Column: High-Fashion Editorial Showcase (hidden on mobile) */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-zinc-950 text-white flex-col justify-between p-12 xl:p-16 overflow-hidden select-none">
+        {/* Editorial Background Image with Subtle Parallax & Overlay */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-40 scale-105 transition-transform duration-1000"
+          style={{
+            backgroundImage: `url('${currentStore?.curatedImageUrl || currentStore?.bannerUrl || 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop'}')`
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent" />
+
+        {/* Top Header */}
+        <div className="relative z-10 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white font-serif font-black text-lg group-hover:border-white transition-colors">
+              {currentStore?.name?.[0]?.toUpperCase() || 'M'}
+            </div>
+            <span className="font-serif text-lg font-black tracking-widest uppercase">
+              {currentStore?.name || 'Maison'}
+            </span>
+          </Link>
+
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1 rounded-full border border-white/20 text-white/80 bg-black/40 backdrop-blur-md">
+            {t('Private Access')}
+          </span>
+        </div>
+
+        {/* Editorial Statement Quote */}
+        <div className="relative z-10 max-w-lg space-y-6">
+          <div className="flex items-center gap-2 text-primary font-black uppercase text-[11px] tracking-[0.25em]">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{t('The Modern Standard')}</span>
+          </div>
+          <h2 className="text-4xl xl:text-5xl font-serif font-black tracking-tight leading-[1.1] uppercase">
+            {t('Curated Elegance.')}<br />
+            <span className="italic font-normal text-white/80">{t('Quiet Luxury.')}</span>
+          </h2>
+          <p className="text-sm text-white/70 font-light leading-relaxed tracking-wide">
+            {t('Designed for those who appreciate architectural tailoring, pure fabrics, and timeless design aesthetics.')}
+          </p>
+        </div>
+
+        {/* Footer info */}
+        <div className="relative z-10 flex items-center justify-between text-[11px] text-white/50 font-mono">
+          <span>© {new Date().getFullYear()} {currentStore?.name || 'Store'}</span>
+          <span className="flex items-center gap-1.5 text-white/70">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            {t('End-to-End Cryptographic Security')}
+          </span>
+        </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-md relative"
-      >
-        <div className="bg-card/50 backdrop-blur-xl rounded-[2.5rem] border border-border/50 p-10 md:p-12 shadow-2xl overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-12 -mt-12 transition-transform group-hover:scale-110" />
-
-          {/* Header */}
-          <div className="text-center mb-10 relative">
-            <Link href="/" className="inline-block group-hover:scale-105 transition-transform">
-              {currentStore?.logoUrl ? (
-                <img src={currentStore.logoUrl} alt={currentStore.name} className="h-16 md:h-20 w-auto object-contain mx-auto mb-6 drop-shadow-2xl" />
+      {/* Right Column: Authentication Hub */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 xl:p-16 relative">
+        <div className="w-full max-w-md space-y-8">
+          {/* Top Bar: Return to store navigation & Language Switcher */}
+          <div className="flex items-center justify-between">
+            <Link 
+              href="/" 
+              className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors group"
+            >
+              {isRTL ? (
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               ) : (
-                <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-white font-black text-3xl mx-auto mb-6 shadow-xl shadow-primary/20">
-                  {currentStore?.name?.[0]?.toUpperCase() || 'M'}
-                </div>
+                <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
               )}
+              <span>{t('Return to Store')}</span>
             </Link>
-            <h1 className="text-4xl font-black text-foreground mb-2 tracking-tight uppercase italic">Access<br /><span className="text-primary not-italic">Portal</span></h1>
-            <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Identify yourself to continue</p>
+
+            <div className="flex items-center gap-3">
+              {redirect && (
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground px-2.5 py-1 rounded-full bg-secondary">
+                  {t('Checkout Required')}
+                </span>
+              )}
+              <LanguageSwitcher />
+            </div>
           </div>
 
-          {/* Success Message */}
+          {/* Registration success alert */}
           {isRegistered && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-8 flex items-center gap-4 p-4 bg-green-500/10 border border-border/50 rounded-2xl shadow-sm"
+              className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center gap-3 text-emerald-600 dark:text-emerald-400"
             >
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-500/20"><Check className="w-4 h-4" /></div>
-              <p className="text-xs text-green-500 font-black uppercase tracking-widest">Account Active</p>
+              <Check className="w-4 h-4 shrink-0" />
+              <p className="text-xs font-bold uppercase tracking-wider">
+                {t('Account verified! You can now sign in.')}
+              </p>
             </motion.div>
           )}
 
-          {/* Login Form */}
-          <LoginForm />
-
-          <div className="mt-10 text-center relative pt-8 border-t border-border/50">
-            <p className="text-sm font-bold text-muted-foreground">
-              New to the platform?{' '}
-              <Link href="/register" className="text-primary hover:underline font-black uppercase tracking-widest">
-                Initialize Account
-              </Link>
+          {/* Heading */}
+          <div className="space-y-2">
+            <h1 className="text-3xl md:text-4xl font-serif font-black tracking-tight uppercase text-foreground">
+              {activeTab === 'login' ? t('Client Access') : t('Create Account')}
+            </h1>
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">
+              {activeTab === 'login' 
+                ? t('Authenticate to unlock your customized shopping experience') 
+                : t('Join our private clientele for bespoke reservations')}
             </p>
           </div>
 
-          {/* Demo Access */}
-          <div className="mt-8 p-6 bg-secondary/50 rounded-3xl border border-border/50 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-2 opacity-10">
-              <Shield className="w-12 h-12" />
-            </div>
-            <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-4">Restricted Demo Access</h4>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-muted-foreground uppercase">Identity</span>
-                <span className="font-black text-foreground tracking-tight">admin@modern.com</span>
-              </div>
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-muted-foreground uppercase">Key</span>
-                <span className="font-black text-foreground tracking-tight">admin123</span>
-              </div>
-            </div>
+          {/* Seamless Mode Switcher Tabs */}
+          <div className="flex p-1 bg-secondary rounded-2xl border border-border/80">
+            <button
+              onClick={() => setActiveTab('login')}
+              className={`flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                activeTab === 'login'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {t('Sign In')}
+            </button>
+            <button
+              onClick={() => setActiveTab('register')}
+              className={`flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                activeTab === 'register'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {t('Register')}
+            </button>
           </div>
-        </div>
 
-        {/* Additional Info */}
-        <div className="mt-12 text-center">
-          <Link href="/" className="inline-flex items-center gap-3 text-xs font-black text-muted-foreground hover:text-primary transition-all uppercase tracking-[0.2em] group">
-            <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center group-hover:border-primary/30 transition-colors">←</div>
-            Return to Discovery
-          </Link>
+          {/* Animated Tab Content */}
+          <div className="relative">
+            <AnimatePresence mode="wait">
+              {activeTab === 'login' ? (
+                <motion.div
+                  key="login-view"
+                  initial={{ opacity: 0, x: isRTL ? 10 : -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: isRTL ? -10 : 10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <LoginForm 
+                    onSwitchToRegister={() => setActiveTab('register')} 
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="register-view"
+                  initial={{ opacity: 0, x: isRTL ? -10 : 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: isRTL ? 10 : -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <RegisterForm 
+                    onSuccess={() => setActiveTab('login')} 
+                    onSwitchToLogin={() => setActiveTab('login')}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Guest Checkout Bypass (if redirected from checkout) */}
+          {redirect?.includes('checkout') && (
+            <div className="pt-4 border-t border-border/60 text-center">
+              <Link
+                href="/checkout?guest=true"
+                className="text-xs font-black uppercase tracking-widest text-primary hover:underline"
+              >
+                {t('Proceed as Guest without Account')} {isRTL ? '←' : '→'}
+              </Link>
+            </div>
+          )}
         </div>
-      </motion.div>
+      </div>
     </div>
   )
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center p-4">Loading...</div>}>
-      <LoginContent />
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center p-4 text-xs uppercase font-bold tracking-widest">Loading Gateway...</div>}>
+      <AuthContent />
     </Suspense>
   )
 }
-

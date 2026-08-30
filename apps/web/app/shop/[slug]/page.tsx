@@ -21,7 +21,7 @@ export default function ShopPage() {
       setIsLoading(true)
       try {
         // We need an API to get store by slug
-        const result = await api.stores.getBySlug(slug as string)
+        const result = await (api as any).stores?.getBySlug(slug as string)
         if (result) {
           setStore(result)
           const productsData = await api.products.list(result.id)
